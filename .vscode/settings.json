@@ -1,0 +1,38 @@
+{
+  "editor.formatOnSave": true,
+  "editor.codeActionsOnSave": {
+    "source.fixAll.eslint": "always"
+  },
+
+  "editor.tabSize": 2,
+  "editor.insertSpaces": true,
+  "editor.rulers": [100],
+
+  "editor.minimap.enabled": false,
+
+  "editor.bracketPairColorization.enabled": true,
+
+  "editor.guides.bracketPairs": "active",
+
+  "files.autoSave": "onFocusChange",
+
+  "files.trimTrailingWhitespace": true,
+
+  "files.insertFinalNewline": true,
+
+  "typescript.tsdk": "node_modules/typescript/lib",
+
+  "terminal.integrated.defaultProfile.osx": "zsh",
+
+  "explorer.confirmDelete": false,
+
+  "explorer.confirmDragAndDrop": false,
+
+  "git.enableSmartCommit": true,
+
+  "git.confirmSync": false,
+
+  "workbench.startupEditor": "none",
+
+  "breadcrumbs.enabled": true
+}

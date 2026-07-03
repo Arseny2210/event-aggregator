@@ -1,0 +1,15 @@
+{
+  "name": "event-aggregator",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "dev": "docker compose -f docker/docker-compose.yml -f docker/docker-compose.override.yml up --build",
+    "lint": "npm run lint:backend && npm run lint:frontend",
+    "lint:backend": "ruff check backend/",
+    "lint:frontend": "cd frontend && npx eslint src/",
+    "format": "npm run format:backend && npm run format:frontend",
+    "format:backend": "ruff format backend/",
+    "format:frontend": "cd frontend && npx prettier --write \"src/**/*.{ts,tsx,css}\"",
+    "clean": "./scripts/clean.sh"
+  }
+}

@@ -1,0 +1,23 @@
+{
+  "recommendations": [
+    "dbaeumer.vscode-eslint",
+
+    "esbenp.prettier-vscode",
+
+    "bradlc.vscode-tailwindcss",
+
+    "ms-python.python",
+
+    "ms-python.vscode-pylance",
+
+    "charliermarsh.ruff",
+
+    "eamodio.gitlens",
+
+    "github.vscode-github-actions",
+
+    "ms-playwright.playwright",
+
+    "ms-azuretools.vscode-docker"
+  ]
+}

@@ -1,0 +1,21 @@
+{
+  "version": "2.0.0",
+
+  "tasks": [
+    {
+      "label": "Lint",
+      "type": "shell",
+      "command": "npm run lint"
+    },
+    {
+      "label": "Test",
+      "type": "shell",
+      "command": "npm test"
+    },
+    {
+      "label": "Build",
+      "type": "shell",
+      "command": "npm run build"
+    }
+  ]
+}

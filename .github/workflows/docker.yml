@@ -1,0 +1,20 @@
+name: Docker
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Build backend image
+        run: docker build -f docker/Dockerfile.backend -t backend ./backend
+
+      - name: Build frontend image
+        run: docker build -f docker/Dockerfile.frontend -t frontend ./frontend
