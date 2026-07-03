@@ -1,2 +1,10 @@
 API_V1_PREFIX = "/api/v1"
 PROJECT_NAME = "Event Aggregator"
+
+PERMISSION_EVENT_MANAGE = "event:manage"
+PERMISSION_ORGANIZER_MANAGE = "organizer:manage"
+PERMISSION_ORGANIZER_DELETE = "organizer:delete"
+PERMISSION_IMPORT_VIEW = "import:view"
+PERMISSION_USER_VIEW = "user:view"
+PERMISSION_ROLE_VIEW = "role:view"
+PERMISSION_PERMISSION_VIEW = "permission:view"

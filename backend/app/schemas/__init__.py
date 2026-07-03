@@ -1,5 +1,6 @@
 """Pydantic v2 domain DTOs for the Event Aggregator application."""
 
+from app.schemas.auth import LoginRequest, RefreshTokenRequest, TokenResponse, UserMeResponse
 from app.schemas.event import EventBase, EventCreate, EventResponse, EventUpdate
 from app.schemas.import_job import ImportJobResponse
 from app.schemas.organizer import OrganizerBase, OrganizerCreate, OrganizerResponse, OrganizerUpdate
@@ -15,6 +16,7 @@ __all__ = [
     "EventResponse",
     "EventUpdate",
     "ImportJobResponse",
+    "LoginRequest",
     "OrganizerBase",
     "OrganizerCreate",
     "OrganizerResponse",
@@ -22,11 +24,14 @@ __all__ = [
     "ParticipationCreate",
     "ParticipationResponse",
     "PermissionResponse",
+    "RefreshTokenRequest",
     "RolePermissionCreate",
     "RolePermissionResponse",
     "RoleResponse",
+    "TokenResponse",
     "UserBase",
     "UserCreate",
+    "UserMeResponse",
     "UserResponse",
     "UserUpdate",
 ]

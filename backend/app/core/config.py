@@ -11,6 +11,9 @@ class Settings(BaseSettings):
     log_level: str = "INFO"
     cors_origins: str = "http://localhost:3000,http://localhost:8000"
     db_echo: bool = False
+    jwt_algorithm: str = "HS256"
+    access_token_expire_minutes: int = 30
+    refresh_token_expire_days: int = 7
 
     @property
     def cors_origin_list(self) -> list[str]:

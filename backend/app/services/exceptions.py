@@ -7,32 +7,39 @@ Hierarchy:
 
     DomainError
     ├── NotFoundError
-    │   ├── EventNotFound
-    │   ├── OrganizerNotFound
-    │   ├── ParticipationNotFound
-    │   ├── UserNotFound
-    │   ├── RoleNotFound
-    │   ├── PermissionNotFound
-    │   └── ImportJobNotFound
+    │   ├── EventNotFoundError
+    │   ├── OrganizerNotFoundError
+    │   ├── ParticipationNotFoundError
+    │   ├── UserNotFoundError
+    │   ├── RoleNotFoundError
+    │   ├── PermissionNotFoundError
+    │   └── ImportJobNotFoundError
     ├── AlreadyExistsError
-    │   ├── DuplicateUsername
-    │   ├── DuplicateEmail
-    │   ├── DuplicateOrganizerName
-    │   ├── DuplicateRoleName
-    │   ├── DuplicatePermissionName
-    │   └── DuplicateParticipation
+    │   ├── DuplicateUsernameError
+    │   ├── DuplicateEmailError
+    │   ├── DuplicateOrganizerNameError
+    │   ├── DuplicateRoleNameError
+    │   ├── DuplicatePermissionNameError
+    │   └── DuplicateParticipationError
     ├── BusinessRuleViolationError
-    │   ├── InvalidEventStatusTransition
-    │   ├── EventNotPublishable
-    │   ├── ArchivedEventNotEditable
-    │   ├── CannotRegisterForArchivedEvent
-    │   ├── RegistrationClosed
-    │   ├── InvalidEventData
-    │   ├── OrganizerInUse
-    │   ├── RoleInUse
-    │   └── PermissionInUse
-    └── ImportOperationError
-        └── InvalidImportStatusTransition
+    │   ├── InvalidEventStatusTransitionError
+    │   ├── EventNotPublishableError
+    │   ├── ArchivedEventNotEditableError
+    │   ├── CannotRegisterForArchivedEventError
+    │   ├── RegistrationClosedError
+    │   ├── InvalidEventDataError
+    │   ├── OrganizerInUseError
+    │   ├── RoleInUseError
+    │   └── PermissionInUseError
+    ├── ImportOperationError
+    │   └── InvalidImportStatusTransitionError
+    ├── AuthenticationError
+    │   ├── InvalidCredentialsError
+    │   └── InvalidTokenError
+    │       └── TokenExpiredError
+    └── AuthorizationError
+        ├── UserInactiveError
+        └── InsufficientPermissionsError
 """
 
 import uuid
@@ -241,3 +248,42 @@ class InvalidImportStatusTransitionError(ImportOperationError):
         )
         self.current = current
         self.attempted = attempted
+
+
+class AuthenticationError(DomainError):
+    """Base exception for authentication failures."""
+
+    code = "authentication_error"
+
+
+class InvalidCredentialsError(AuthenticationError):
+    def __init__(self) -> None:
+        super().__init__("Invalid username or password")
+
+
+class InvalidTokenError(AuthenticationError):
+    def __init__(self, message: str) -> None:
+        super().__init__(message)
+
+
+class TokenExpiredError(InvalidTokenError):
+    def __init__(self) -> None:
+        super().__init__("Token has expired")
+
+
+class AuthorizationError(DomainError):
+    """Base exception for authorization failures."""
+
+    code = "authorization_error"
+
+
+class UserInactiveError(AuthorizationError):
+    def __init__(self, user_id: uuid.UUID) -> None:
+        super().__init__("User account is not active")
+        self.user_id = user_id
+
+
+class InsufficientPermissionsError(AuthorizationError):
+    def __init__(self, required: str) -> None:
+        super().__init__(f"Insufficient permissions: {required}")
+        self.required = required
