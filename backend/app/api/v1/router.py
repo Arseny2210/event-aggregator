@@ -2,6 +2,14 @@
 
 from fastapi import APIRouter
 
+from app.api.v1.endpoints.events import router as events_router
+from app.api.v1.endpoints.import_jobs import router as import_jobs_router
+from app.api.v1.endpoints.organizers import router as organizers_router
+from app.api.v1.endpoints.participations import router as participations_router
+from app.api.v1.endpoints.permissions import router as permissions_router
+from app.api.v1.endpoints.roles import router as roles_router
+from app.api.v1.endpoints.users import router as users_router
+
 router = APIRouter(
     responses={
         400: {
@@ -58,3 +66,11 @@ router = APIRouter(
         },
     },
 )
+
+router.include_router(events_router)
+router.include_router(organizers_router)
+router.include_router(participations_router)
+router.include_router(users_router)
+router.include_router(roles_router)
+router.include_router(permissions_router)
+router.include_router(import_jobs_router)
