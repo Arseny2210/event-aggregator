@@ -23,3 +23,7 @@ uploads
 
 .DS_Store
 *.tsbuildinfo
+
+*.tgz
+*.tar
+*.tar.gz
