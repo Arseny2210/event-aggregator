@@ -3,6 +3,11 @@
 import enum
 
 
+class UserRole(enum.Enum):
+    administrator = "administrator"
+    editor = "editor"
+
+
 class EventStatus(enum.Enum):
     draft = "draft"
     published = "published"
