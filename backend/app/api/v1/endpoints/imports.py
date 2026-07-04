@@ -6,7 +6,6 @@ from uuid import UUID
 from fastapi import APIRouter, Depends, HTTPException, Query, Response, UploadFile
 
 from app.api.v1.dependencies import get_import_job_service
-from app.api.v1.schemas import Page
 from app.core.constants import PERMISSION_IMPORT_CREATE, PERMISSION_IMPORT_VIEW
 from app.dependencies.auth import require_permission, require_role
 from app.models.enums import ImportRowStatus, ImportStatus, UserRole
@@ -14,6 +13,7 @@ from app.models.import_job import ImportJob
 from app.models.user import User
 from app.schemas.import_job import ImportJobResponse, ImportSummary
 from app.schemas.import_row_result import RowResultResponse
+from app.schemas.page import Page
 from app.services.import_job import ImportJobService
 
 router = APIRouter()

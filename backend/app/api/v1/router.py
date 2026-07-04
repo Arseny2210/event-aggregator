@@ -3,6 +3,7 @@
 from fastapi import APIRouter
 
 from app.api.v1.endpoints.auth import router as auth_router
+from app.api.v1.endpoints.events import router as events_router
 from app.api.v1.endpoints.imports import router as imports_router
 
 router = APIRouter(
@@ -63,4 +64,5 @@ router = APIRouter(
 )
 
 router.include_router(auth_router, prefix="/auth", tags=["Authentication"])
+router.include_router(events_router, prefix="/events", tags=["events"])
 router.include_router(imports_router, prefix="/imports", tags=["imports"])

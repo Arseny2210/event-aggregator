@@ -11,7 +11,9 @@ from app.models.enums import EventStatus
 from app.models.event import Event
 from app.repositories.event import EventRepository
 from app.repositories.organizer import OrganizerRepository
-from app.schemas.event import EventCreate, EventUpdate
+from app.schemas.event import EventCreate, EventResponse, EventUpdate
+from app.schemas.event_search import EventSearchFilters
+from app.schemas.page import Page
 from app.services.exceptions import (
     ArchivedEventNotEditableError,
     EventNotFoundError,
@@ -122,6 +124,17 @@ class EventService:
 
     async def search_events(self, query: str, offset: int, limit: int) -> tuple[list[Event], int]:
         return await self.repository.search_by_title(query, offset, limit)
+
+    async def search(
+        self, filters: EventSearchFilters, offset: int, limit: int
+    ) -> Page[EventResponse]:
+        result = await self.repository.search(filters, offset, limit)
+        return Page[EventResponse](
+            items=[EventResponse.model_validate(e) for e in result.items],
+            total=result.total,
+            offset=offset,
+            limit=limit,
+        )
 
     async def list_events_by_organizer(
         self, organizer_id: UUID, offset: int, limit: int
