@@ -2,10 +2,12 @@
 
 from app.schemas.auth import LoginRequest, RefreshTokenRequest, TokenResponse, UserMeResponse
 from app.schemas.event import EventBase, EventCreate, EventResponse, EventUpdate
+from app.schemas.event_search import EventSearchFilters, EventSort
 from app.schemas.import_job import ImportJobResponse, ImportSummary
 from app.schemas.import_row import EventExcelRow
 from app.schemas.import_row_result import RowResultResponse
 from app.schemas.organizer import OrganizerBase, OrganizerCreate, OrganizerResponse, OrganizerUpdate
+from app.schemas.page import Page
 from app.schemas.participation import ParticipationCreate, ParticipationResponse
 from app.schemas.permission import PermissionResponse
 from app.schemas.role import RoleResponse
@@ -17,6 +19,8 @@ __all__ = [
     "EventCreate",
     "EventExcelRow",
     "EventResponse",
+    "EventSearchFilters",
+    "EventSort",
     "EventUpdate",
     "ImportJobResponse",
     "ImportSummary",
@@ -25,6 +29,7 @@ __all__ = [
     "OrganizerCreate",
     "OrganizerResponse",
     "OrganizerUpdate",
+    "Page",
     "ParticipationCreate",
     "ParticipationResponse",
     "PermissionResponse",
