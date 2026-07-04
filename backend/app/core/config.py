@@ -1,3 +1,4 @@
+from pydantic import model_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
@@ -11,6 +12,8 @@ class Settings(BaseSettings):
     log_level: str = "INFO"
     cors_origins: str = "http://localhost:3000,http://localhost:8000"
     db_echo: bool = False
+    db_pool_size: int = 5
+    db_max_overflow: int = 10
     jwt_algorithm: str = "HS256"
     access_token_expire_minutes: int = 30
     refresh_token_expire_days: int = 7
@@ -25,6 +28,17 @@ class Settings(BaseSettings):
     smtp_use_tls: bool = True
     smtp_from_address: str = "noreply@example.com"
     notification_max_retries: int = 3
+    openapi_docs_enabled: bool = True
+    openapi_schema_enabled: bool = True
+
+    @model_validator(mode="after")
+    def _validate_secret_key(self) -> "Settings":
+        if (
+            self.environment == "production"
+            and self.secret_key == "change-this-to-a-random-secret-key"
+        ):
+            raise ValueError("SECRET_KEY must be set to a secure random value in production")
+        return self
 
     @property
     def cors_origin_list(self) -> list[str]:

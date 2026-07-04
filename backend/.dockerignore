@@ -5,7 +5,17 @@ __pycache__
 .gitignore
 .env
 .env.example
+.env.prod
+.env.local
 .DS_Store
 README.md
 *.md
 .ruff_cache
+tests
+htmlcov
+.coverage
+coverage.xml
+.pytest_cache
+pytest.ini
+.coveragerc
+uploads
