@@ -48,16 +48,20 @@ async def list_notifications(
     )
 
 
-@router.get("/{notification_id}", response_model=NotificationResponse)
-async def get_notification(
-    notification_id: str,
+@router.get("/templates", response_model=Page[NotificationTemplateResponse])
+async def list_notification_templates(
     notification_service: Annotated[NotificationService, Depends(get_notification_service)],
     current_user: Annotated[User, Depends(require_permission(PERMISSION_NOTIFICATION_VIEW))],
+    offset: Annotated[int, Query(ge=0)] = 0,
+    limit: Annotated[int, Query(ge=1, le=100)] = 20,
 ):
-    from uuid import UUID
-
-    notification = await notification_service.get_notification(UUID(notification_id))
-    return NotificationResponse.model_validate(notification)
+    items, total = await notification_service.list_templates(offset, limit)
+    return Page[NotificationTemplateResponse](
+        items=[NotificationTemplateResponse.model_validate(item) for item in items],
+        total=total,
+        offset=offset,
+        limit=limit,
+    )
 
 
 @router.post("/send", response_model=NotificationResponse, status_code=201)
@@ -94,17 +98,13 @@ async def send_test_notification(
     return NotificationResponse.model_validate(notification)
 
 
-@router.get("/templates", response_model=Page[NotificationTemplateResponse])
-async def list_notification_templates(
+@router.get("/{notification_id}", response_model=NotificationResponse)
+async def get_notification(
+    notification_id: str,
     notification_service: Annotated[NotificationService, Depends(get_notification_service)],
     current_user: Annotated[User, Depends(require_permission(PERMISSION_NOTIFICATION_VIEW))],
-    offset: Annotated[int, Query(ge=0)] = 0,
-    limit: Annotated[int, Query(ge=1, le=100)] = 20,
 ):
-    items, total = await notification_service.list_templates(offset, limit)
-    return Page[NotificationTemplateResponse](
-        items=[NotificationTemplateResponse.model_validate(item) for item in items],
-        total=total,
-        offset=offset,
-        limit=limit,
-    )
+    from uuid import UUID
+
+    notification = await notification_service.get_notification(UUID(notification_id))
+    return NotificationResponse.model_validate(notification)

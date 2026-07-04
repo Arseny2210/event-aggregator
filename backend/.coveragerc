@@ -1,0 +1,28 @@
+[run]
+source = app
+omit =
+    */tests/*
+    */migrations/*
+    */__pycache__/*
+    app/main.py
+    app/database/migrations/*
+
+[report]
+exclude_lines =
+    pragma: no cover
+    def __repr__
+    raise AssertionError
+    raise NotImplementedError
+    if __name__ == .__main__.:
+    if TYPE_CHECKING:
+    @abstractmethod
+
+show_missing = True
+skip_covered = False
+fail_under = 85
+
+[html]
+directory = htmlcov
+
+[xml]
+output = coverage.xml
