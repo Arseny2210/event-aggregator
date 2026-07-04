@@ -26,6 +26,7 @@ from app.repositories.participation import ParticipationRepository
 from app.repositories.permission import PermissionRepository
 from app.repositories.role import RoleRepository
 from app.repositories.role_permission import RolePermissionRepository
+from app.repositories.statistics import StatisticsRepository
 from app.repositories.user import UserRepository
 from app.services.event import EventService
 from app.services.import_job import ImportJobService
@@ -33,6 +34,7 @@ from app.services.organizer import OrganizerService
 from app.services.participation import ParticipationService
 from app.services.permission import PermissionService
 from app.services.role import RoleService
+from app.services.statistics import StatisticsService
 from app.services.user import UserService
 
 _storage_backend = LocalStorageBackend(Path(settings.upload_dir))
@@ -102,3 +104,10 @@ async def get_import_job_service(
         dispatcher=_task_dispatcher,
         session_factory=async_session_factory,
     )
+
+
+async def get_statistics_service(
+    session: Annotated[AsyncSession, Depends(get_db)],
+) -> StatisticsService:
+    repo = StatisticsRepository(session)
+    return StatisticsService(repo)
