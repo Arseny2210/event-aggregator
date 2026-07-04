@@ -14,13 +14,23 @@ from fastapi import Depends
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.config import settings
+from app.core.email import SMTPEmailBackend
+from app.core.notifications import (
+    EmailNotificationChannel,
+    InAppNotificationChannel,
+    TelegramNotificationChannel,
+)
 from app.core.storage import LocalStorageBackend
 from app.core.tasks import AsyncioBackgroundTaskDispatcher
+from app.core.templates import TemplateRenderer
 from app.database.session import async_session_factory
 from app.dependencies.database import get_db
+from app.models.enums import NotificationChannelType
 from app.repositories.event import EventRepository
 from app.repositories.import_job import ImportJobRepository
 from app.repositories.import_row_result import ImportJobRowResultRepository
+from app.repositories.notification import NotificationRepository
+from app.repositories.notification_template import NotificationTemplateRepository
 from app.repositories.organizer import OrganizerRepository
 from app.repositories.participation import ParticipationRepository
 from app.repositories.permission import PermissionRepository
@@ -30,6 +40,8 @@ from app.repositories.statistics import StatisticsRepository
 from app.repositories.user import UserRepository
 from app.services.event import EventService
 from app.services.import_job import ImportJobService
+from app.services.notification import NotificationService
+from app.services.notification_sender import NotificationSenderFactory
 from app.services.organizer import OrganizerService
 from app.services.participation import ParticipationService
 from app.services.permission import PermissionService
@@ -39,6 +51,26 @@ from app.services.user import UserService
 
 _storage_backend = LocalStorageBackend(Path(settings.upload_dir))
 _task_dispatcher = AsyncioBackgroundTaskDispatcher()
+_email_backend = SMTPEmailBackend(
+    host=settings.smtp_host,
+    port=settings.smtp_port,
+    username=settings.smtp_username,
+    password=settings.smtp_password,
+    use_tls=settings.smtp_use_tls,
+    from_address=settings.smtp_from_address,
+)
+_notification_channels = {
+    NotificationChannelType.email: EmailNotificationChannel(_email_backend),
+    NotificationChannelType.telegram: TelegramNotificationChannel(),
+    NotificationChannelType.in_app: InAppNotificationChannel(),
+}
+_template_renderer = TemplateRenderer()
+_sender_factory = NotificationSenderFactory(
+    session_factory=async_session_factory,
+    channels=_notification_channels,
+    dispatcher=_task_dispatcher,
+    max_retries=settings.notification_max_retries,
+)
 
 
 async def get_organizer_service(
@@ -111,3 +143,16 @@ async def get_statistics_service(
 ) -> StatisticsService:
     repo = StatisticsRepository(session)
     return StatisticsService(repo)
+
+
+async def get_notification_service(
+    session: Annotated[AsyncSession, Depends(get_db)],
+) -> NotificationService:
+    notification_repo = NotificationRepository(session)
+    template_repo = NotificationTemplateRepository(session)
+    return NotificationService(
+        repository=notification_repo,
+        template_repository=template_repo,
+        renderer=_template_renderer,
+        sender_factory=_sender_factory,
+    )

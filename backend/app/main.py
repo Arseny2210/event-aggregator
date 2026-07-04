@@ -25,6 +25,7 @@ def create_app() -> FastAPI:
             {"name": "users", "description": "User management"},
             {"name": "roles", "description": "Role and permission management"},
             {"name": "imports", "description": "Excel import management"},
+            {"name": "notifications", "description": "Notification management and delivery"},
             {"name": "statistics", "description": "Dashboard statistics"},
         ],
     )

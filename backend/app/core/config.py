@@ -18,6 +18,13 @@ class Settings(BaseSettings):
     max_upload_size_bytes: int = 10_485_760
     default_import_category_id: str = ""
     import_batch_size: int = 100
+    smtp_host: str = "localhost"
+    smtp_port: int = 587
+    smtp_username: str | None = None
+    smtp_password: str | None = None
+    smtp_use_tls: bool = True
+    smtp_from_address: str = "noreply@example.com"
+    notification_max_retries: int = 3
 
     @property
     def cors_origin_list(self) -> list[str]:
