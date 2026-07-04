@@ -250,6 +250,29 @@ class InvalidImportStatusTransitionError(ImportOperationError):
         self.attempted = attempted
 
 
+class InvalidFileFormatError(ImportOperationError):
+    def __init__(self, extension: str) -> None:
+        super().__init__(f"Invalid file format: {extension}. Accepted: .xlsx, .xls")
+        self.extension = extension
+
+
+class FileTooLargeError(ImportOperationError):
+    def __init__(self, size: int, max_size: int) -> None:
+        super().__init__(f"File too large: {size} bytes exceeds maximum {max_size} bytes")
+        self.size = size
+        self.max_size = max_size
+
+
+class EmptyFileError(ImportOperationError):
+    def __init__(self) -> None:
+        super().__init__("Uploaded file is empty")
+
+
+class ImportProcessingError(ImportOperationError):
+    def __init__(self, message: str) -> None:
+        super().__init__(f"Import processing failed: {message}")
+
+
 class AuthenticationError(DomainError):
     """Base exception for authentication failures."""
 
