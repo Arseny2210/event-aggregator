@@ -9,6 +9,7 @@ from app.services.exceptions import (
     FileTooLargeError,
     ImportOperationError,
     NotFoundError,
+    NotificationOperationError,
 )
 
 
@@ -81,6 +82,15 @@ def setup_error_handler(app: FastAPI) -> None:
         return JSONResponse(
             status_code=403,
             content={"error": {"code": "forbidden", "message": exc.message}},
+        )
+
+    @app.exception_handler(NotificationOperationError)
+    async def notification_error_handler(
+        request: Request, exc: NotificationOperationError
+    ) -> JSONResponse:
+        return JSONResponse(
+            status_code=400,
+            content={"error": {"code": exc.code, "message": exc.message}},
         )
 
     @app.exception_handler(Exception)

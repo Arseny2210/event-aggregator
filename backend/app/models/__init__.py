@@ -3,6 +3,8 @@
 from app.models.event import Event
 from app.models.import_job import ImportJob
 from app.models.import_row_result import ImportJobRowResult
+from app.models.notification import Notification
+from app.models.notification_template import NotificationTemplate
 from app.models.organizer import Organizer
 from app.models.participation import Participation
 from app.models.permission import Permission
@@ -14,6 +16,8 @@ __all__ = [
     "Event",
     "ImportJob",
     "ImportJobRowResult",
+    "Notification",
+    "NotificationTemplate",
     "Organizer",
     "Participation",
     "Permission",

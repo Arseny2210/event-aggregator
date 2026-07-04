@@ -6,6 +6,13 @@ from app.schemas.event_search import EventSearchFilters, EventSort
 from app.schemas.import_job import ImportJobResponse, ImportSummary
 from app.schemas.import_row import EventExcelRow
 from app.schemas.import_row_result import RowResultResponse
+from app.schemas.notification import (
+    NotificationContext,
+    NotificationResponse,
+    NotificationTemplateResponse,
+    SendNotificationRequest,
+    SendTestNotificationRequest,
+)
 from app.schemas.organizer import OrganizerBase, OrganizerCreate, OrganizerResponse, OrganizerUpdate
 from app.schemas.page import Page
 from app.schemas.participation import ParticipationCreate, ParticipationResponse
@@ -50,6 +57,9 @@ __all__ = [
     "ImportStatusCounts",
     "ImportSummary",
     "LoginRequest",
+    "NotificationContext",
+    "NotificationResponse",
+    "NotificationTemplateResponse",
     "OrganizerBase",
     "OrganizerCreate",
     "OrganizerResponse",
@@ -68,6 +78,8 @@ __all__ = [
     "RoleResponse",
     "RoleUserCountResponse",
     "RowResultResponse",
+    "SendNotificationRequest",
+    "SendTestNotificationRequest",
     "TimeRange",
     "TimeRangeFilter",
     "TimeSeriesPoint",

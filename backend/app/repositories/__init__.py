@@ -3,6 +3,8 @@
 from app.repositories.event import EventRepository
 from app.repositories.import_job import ImportJobRepository
 from app.repositories.import_row_result import ImportJobRowResultRepository
+from app.repositories.notification import NotificationRepository
+from app.repositories.notification_template import NotificationTemplateRepository
 from app.repositories.organizer import OrganizerRepository
 from app.repositories.participation import ParticipationRepository
 from app.repositories.permission import PermissionRepository
@@ -15,6 +17,8 @@ __all__ = [
     "EventRepository",
     "ImportJobRepository",
     "ImportJobRowResultRepository",
+    "NotificationRepository",
+    "NotificationTemplateRepository",
     "OrganizerRepository",
     "ParticipationRepository",
     "PermissionRepository",

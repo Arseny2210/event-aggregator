@@ -20,11 +20,18 @@ from app.services.exceptions import (
     InvalidFileFormatError,
     InvalidTokenError,
     NotFoundError,
+    NotificationNotFoundError,
+    NotificationTemplateNotFoundError,
     TokenExpiredError,
     UserInactiveError,
 )
 from app.services.import_job import ImportJobService
 from app.services.import_processor import ImportProcessor
+from app.services.notification import NotificationService
+from app.services.notification_sender import (
+    NotificationSender,
+    NotificationSenderFactory,
+)
 from app.services.organizer import OrganizerService
 from app.services.participation import ParticipationService
 from app.services.permission import PermissionService
@@ -52,6 +59,11 @@ __all__ = [
     "InvalidFileFormatError",
     "InvalidTokenError",
     "NotFoundError",
+    "NotificationNotFoundError",
+    "NotificationSender",
+    "NotificationSenderFactory",
+    "NotificationService",
+    "NotificationTemplateNotFoundError",
     "OrganizerService",
     "ParticipationService",
     "PermissionService",

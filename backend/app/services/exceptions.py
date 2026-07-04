@@ -310,3 +310,25 @@ class InsufficientPermissionsError(AuthorizationError):
     def __init__(self, required: str) -> None:
         super().__init__(f"Insufficient permissions: {required}")
         self.required = required
+
+
+class NotificationOperationError(DomainError):
+    """A notification operation failed."""
+
+    code = "notification_error"
+
+
+class NotificationNotFoundError(NotFoundError):
+    def __init__(self, notification_id: uuid.UUID) -> None:
+        super().__init__(f"Notification not found: {notification_id}")
+        self.notification_id = notification_id
+
+
+class NotificationTemplateNotFoundError(NotFoundError):
+    def __init__(self, template_type: str, channel: str, language: str = "en") -> None:
+        super().__init__(
+            f"Template not found: type={template_type}, channel={channel}, language={language}"
+        )
+        self.template_type = template_type
+        self.channel = channel
+        self.language = language
