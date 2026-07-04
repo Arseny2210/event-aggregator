@@ -29,6 +29,7 @@ from app.services.organizer import OrganizerService
 from app.services.participation import ParticipationService
 from app.services.permission import PermissionService
 from app.services.role import RoleService
+from app.services.statistics import StatisticsService
 from app.services.transaction import transactional
 from app.services.user import UserService
 
@@ -55,6 +56,7 @@ __all__ = [
     "ParticipationService",
     "PermissionService",
     "RoleService",
+    "StatisticsService",
     "TokenExpiredError",
     "UserInactiveError",
     "UserService",
