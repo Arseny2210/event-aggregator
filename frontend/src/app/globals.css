@@ -10,3 +10,10 @@
   --color-muted: #64748b;
   --color-border: #e2e8f0;
 }
+
+@layer base {
+  body {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+}
