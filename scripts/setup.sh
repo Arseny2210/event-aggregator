@@ -11,6 +11,10 @@ cd backend
 python3 -m venv .venv
 source .venv/bin/activate
 pip install -e ".[dev]"
+
+echo "==> Running database migrations..."
+.venv/bin/alembic upgrade head
+
 cd ..
 
 echo "==> Copying environment templates..."

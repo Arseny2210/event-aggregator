@@ -1,6 +1,7 @@
 from fastapi import FastAPI
 
 from app.api.router import api_router
+from app.core.config import settings
 from app.core.constants import PROJECT_NAME
 from app.lifespan import lifespan
 from app.middleware.cors import setup_cors
@@ -9,13 +10,17 @@ from app.routers.health import router as health_router
 
 
 def create_app() -> FastAPI:
+    docs_url = "/docs" if settings.openapi_docs_enabled else None
+    redoc_url = "/redoc" if settings.openapi_docs_enabled else None
+    openapi_url = "/openapi.json" if settings.openapi_schema_enabled else None
+
     app = FastAPI(
         title=PROJECT_NAME,
         description="Centralized university events platform API",
         version="1.0.0",
-        docs_url="/docs",
-        redoc_url="/redoc",
-        openapi_url="/openapi.json",
+        docs_url=docs_url,
+        redoc_url=redoc_url,
+        openapi_url=openapi_url,
         lifespan=lifespan,
         openapi_tags=[
             {"name": "health", "description": "Health check endpoints"},

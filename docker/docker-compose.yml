@@ -1,9 +1,9 @@
 services:
   postgres:
-    image: postgres:18-alpine
+    image: postgres:16-alpine
     restart: unless-stopped
     volumes:
-      - postgres_data:/var/lib/postgresql
+      - postgres_data:/var/lib/postgresql/data
     environment:
       POSTGRES_DB: event_aggregator
       POSTGRES_USER: postgres
@@ -25,6 +25,18 @@ services:
       timeout: 5s
       retries: 5
 
+  migrate:
+    build:
+      context: ../backend
+      dockerfile: ../docker/Dockerfile.backend
+    entrypoint: ["alembic", "upgrade", "head"]
+    environment:
+      DATABASE_URL: postgresql+asyncpg://postgres:postgres@postgres:5432/event_aggregator
+    depends_on:
+      postgres:
+        condition: service_healthy
+    restart: "no"
+
   backend:
     build:
       context: ../backend
@@ -33,11 +45,12 @@ services:
     environment:
       DATABASE_URL: postgresql+asyncpg://postgres:postgres@postgres:5432/event_aggregator
       REDIS_URL: redis://redis:6379/0
+      SECRET_KEY: change-this-to-a-random-secret-key
       ENVIRONMENT: development
       CORS_ORIGINS: http://localhost:3000,http://localhost:8000
     depends_on:
-      postgres:
-        condition: service_healthy
+      migrate:
+        condition: service_completed_successfully
       redis:
         condition: service_healthy
 
