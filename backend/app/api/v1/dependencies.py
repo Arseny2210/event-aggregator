@@ -7,14 +7,20 @@ nor context managers — because services and repositories hold no resources
 that require cleanup. Session lifetime is managed by ``get_db()``.
 """
 
+from pathlib import Path
 from typing import Annotated
 
 from fastapi import Depends
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from app.core.config import settings
+from app.core.storage import LocalStorageBackend
+from app.core.tasks import AsyncioBackgroundTaskDispatcher
+from app.database.session import async_session_factory
 from app.dependencies.database import get_db
 from app.repositories.event import EventRepository
 from app.repositories.import_job import ImportJobRepository
+from app.repositories.import_row_result import ImportJobRowResultRepository
 from app.repositories.organizer import OrganizerRepository
 from app.repositories.participation import ParticipationRepository
 from app.repositories.permission import PermissionRepository
@@ -28,6 +34,9 @@ from app.services.participation import ParticipationService
 from app.services.permission import PermissionService
 from app.services.role import RoleService
 from app.services.user import UserService
+
+_storage_backend = LocalStorageBackend(Path(settings.upload_dir))
+_task_dispatcher = AsyncioBackgroundTaskDispatcher()
 
 
 async def get_organizer_service(
@@ -84,4 +93,12 @@ async def get_import_job_service(
     session: Annotated[AsyncSession, Depends(get_db)],
 ) -> ImportJobService:
     import_job_repo = ImportJobRepository(session)
-    return ImportJobService(session, import_job_repo)
+    row_result_repo = ImportJobRowResultRepository(session)
+    return ImportJobService(
+        session=session,
+        repository=import_job_repo,
+        row_result_repository=row_result_repo,
+        storage=_storage_backend,
+        dispatcher=_task_dispatcher,
+        session_factory=async_session_factory,
+    )

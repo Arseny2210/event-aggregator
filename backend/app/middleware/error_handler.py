@@ -3,7 +3,10 @@ from fastapi.responses import JSONResponse
 
 from app.services.exceptions import (
     AlreadyExistsError,
+    AuthenticationError,
+    AuthorizationError,
     BusinessRuleViolationError,
+    FileTooLargeError,
     ImportOperationError,
     NotFoundError,
 )
@@ -33,24 +36,14 @@ def setup_error_handler(app: FastAPI) -> None:
     async def not_found_handler(request: Request, exc: NotFoundError) -> JSONResponse:
         return JSONResponse(
             status_code=404,
-            content={
-                "error": {
-                    "code": exc.code,
-                    "message": exc.message,
-                }
-            },
+            content={"error": {"code": exc.code, "message": exc.message}},
         )
 
     @app.exception_handler(AlreadyExistsError)
     async def conflict_handler(request: Request, exc: AlreadyExistsError) -> JSONResponse:
         return JSONResponse(
             status_code=409,
-            content={
-                "error": {
-                    "code": exc.code,
-                    "message": exc.message,
-                }
-            },
+            content={"error": {"code": exc.code, "message": exc.message}},
         )
 
     @app.exception_handler(BusinessRuleViolationError)
@@ -59,24 +52,35 @@ def setup_error_handler(app: FastAPI) -> None:
     ) -> JSONResponse:
         return JSONResponse(
             status_code=400,
-            content={
-                "error": {
-                    "code": exc.code,
-                    "message": exc.message,
-                }
-            },
+            content={"error": {"code": exc.code, "message": exc.message}},
+        )
+
+    @app.exception_handler(FileTooLargeError)
+    async def file_too_large_handler(request: Request, exc: FileTooLargeError) -> JSONResponse:
+        return JSONResponse(
+            status_code=413,
+            content={"error": {"code": "file_too_large", "message": exc.message}},
         )
 
     @app.exception_handler(ImportOperationError)
     async def import_error_handler(request: Request, exc: ImportOperationError) -> JSONResponse:
         return JSONResponse(
             status_code=400,
-            content={
-                "error": {
-                    "code": exc.code,
-                    "message": exc.message,
-                }
-            },
+            content={"error": {"code": exc.code, "message": exc.message}},
+        )
+
+    @app.exception_handler(AuthenticationError)
+    async def authentication_handler(request: Request, exc: AuthenticationError) -> JSONResponse:
+        return JSONResponse(
+            status_code=401,
+            content={"error": {"code": "unauthorized", "message": exc.message}},
+        )
+
+    @app.exception_handler(AuthorizationError)
+    async def authorization_handler(request: Request, exc: AuthorizationError) -> JSONResponse:
+        return JSONResponse(
+            status_code=403,
+            content={"error": {"code": "forbidden", "message": exc.message}},
         )
 
     @app.exception_handler(Exception)
