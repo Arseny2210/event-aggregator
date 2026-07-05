@@ -47,9 +47,9 @@ export interface RowResultParams {
 }
 
 export const IMPORT_STATUS_LABELS: Record<ImportStatus, string> = {
-  processing: "Processing",
-  completed: "Completed",
-  failed: "Failed",
+  processing: "Обработка",
+  completed: "Завершён",
+  failed: "Ошибка",
 }
 
 export const IMPORT_STATUS_COLORS: Record<ImportStatus, string> = {
@@ -59,9 +59,9 @@ export const IMPORT_STATUS_COLORS: Record<ImportStatus, string> = {
 }
 
 export const IMPORT_ROW_STATUS_LABELS: Record<ImportRowStatus, string> = {
-  imported: "Imported",
-  warning: "Warning",
-  failed: "Failed",
+  imported: "Импортировано",
+  warning: "Предупреждение",
+  failed: "Ошибка",
 }
 
 export const IMPORT_ROW_STATUS_COLORS: Record<ImportRowStatus, string> = {

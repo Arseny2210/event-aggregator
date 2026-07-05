@@ -50,12 +50,8 @@ async def list_events(
 
 
 @router.get("/{event_id}", response_model=EventResponse)
-async def get_event(
-    event_id: UUID,
-    event_service: Annotated[EventService, Depends(get_event_service)],
-):
-    event = await event_service.get_event(event_id)
-    return EventResponse.model_validate(event)
+async def get_event(event_id: UUID, event_service=Depends(get_event_service)):
+    return await event_service.get_event_response(event_id)
 
 
 @router.post("/", response_model=EventResponse, status_code=201)
@@ -65,7 +61,7 @@ async def create_event(
     event_service: Annotated[EventService, Depends(get_event_service)],
 ):
     event = await event_service.create_event(data)
-    return EventResponse.model_validate(event)
+    return await event_service.get_event_response(event.id)
 
 
 @router.patch("/{event_id}", response_model=EventResponse)
@@ -75,8 +71,8 @@ async def update_event(
     current_user: Annotated[User, Depends(require_permission(PERMISSION_EVENT_MANAGE))],
     event_service: Annotated[EventService, Depends(get_event_service)],
 ):
-    event = await event_service.update_event(event_id, data)
-    return EventResponse.model_validate(event)
+    await event_service.update_event(event_id, data)
+    return await event_service.get_event_response(event_id)
 
 
 @router.delete("/{event_id}", response_class=Response, status_code=204)

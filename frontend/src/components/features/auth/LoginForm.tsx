@@ -3,6 +3,7 @@
 import { useState } from "react"
 import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
+import { motion } from "framer-motion"
 import { Button } from "@/components/ui/Button"
 import { Input } from "@/components/ui/Input"
 import { Alert } from "@/components/ui/Alert"
@@ -28,27 +29,33 @@ export function LoginForm() {
   }
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+    <motion.form
+      initial={{ opacity: 0, y: 10 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ delay: 0.1 }}
+      onSubmit={handleSubmit(onSubmit)}
+      className="space-y-4 text-left"
+    >
       {error && <Alert variant="error">{error}</Alert>}
 
       <Input
-        label="Username"
-        placeholder="Enter your username"
+        label="Имя пользователя"
+        placeholder="Введите имя пользователя"
         {...register("username")}
         error={errors.username?.message}
       />
 
       <Input
-        label="Password"
+        label="Пароль"
         type="password"
-        placeholder="Enter your password"
+        placeholder="Введите пароль"
         {...register("password")}
         error={errors.password?.message}
       />
 
       <Button type="submit" className="w-full" isLoading={isSubmitting}>
-        Sign In
+        Войти
       </Button>
-    </form>
+    </motion.form>
   )
 }

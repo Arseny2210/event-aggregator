@@ -11,6 +11,7 @@ from app.models.enums import EventStatus
 from app.models.event import Event
 from app.repositories.event import EventRepository
 from app.repositories.organizer import OrganizerRepository
+from app.repositories.participation import ParticipationRepository
 from app.schemas.event import EventCreate, EventResponse, EventUpdate
 from app.schemas.event_search import EventSearchFilters
 from app.schemas.page import Page
@@ -59,10 +60,21 @@ class EventService:
         session: AsyncSession,
         repository: EventRepository,
         organizer_repository: OrganizerRepository,
+        participation_repository: ParticipationRepository | None = None,
     ) -> None:
         self.session = session
         self.repository = repository
         self.organizer_repository = organizer_repository
+        self.participation_repository = participation_repository
+
+    async def _build_response(self, event: Event) -> EventResponse:
+        participants_count = 0
+        if self.participation_repository is not None:
+            participants_count = await self.participation_repository.count_by_event(event.id)
+        return EventResponse(
+            **event.__dict__,
+            participants_count=participants_count,
+        )
 
     async def get_event(self, event_id: UUID) -> Event:
         event = await self.repository.get_by_id(event_id)
@@ -125,12 +137,17 @@ class EventService:
     async def search_events(self, query: str, offset: int, limit: int) -> tuple[list[Event], int]:
         return await self.repository.search_by_title(query, offset, limit)
 
+    async def get_event_response(self, event_id: UUID) -> EventResponse:
+        event = await self.get_event(event_id)
+        return await self._build_response(event)
+
     async def search(
         self, filters: EventSearchFilters, offset: int, limit: int
     ) -> Page[EventResponse]:
         result = await self.repository.search(filters, offset, limit)
+        items = [await self._build_response(e) for e in result.items]
         return Page[EventResponse](
-            items=[EventResponse.model_validate(e) for e in result.items],
+            items=items,
             total=result.total,
             offset=offset,
             limit=limit,

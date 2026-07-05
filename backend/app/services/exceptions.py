@@ -206,6 +206,12 @@ class RegistrationClosedError(BusinessRuleViolationError):
         self.event_id = event_id
 
 
+class ParticipationNotEnabledError(BusinessRuleViolationError):
+    def __init__(self, event_id: uuid.UUID) -> None:
+        super().__init__(f"Participation is not enabled for event {event_id}")
+        self.event_id = event_id
+
+
 class InvalidEventDataError(BusinessRuleViolationError):
     def __init__(self, event_id: uuid.UUID | None, reason: str) -> None:
         prefix = f"Event {event_id}" if event_id is not None else "Event"

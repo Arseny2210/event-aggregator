@@ -4,7 +4,6 @@ import { useEffect, useRef } from "react"
 import { Input } from "@/components/ui/Input"
 import { Select } from "@/components/ui/Select"
 import { Button } from "@/components/ui/Button"
-import { type EventStatus } from "@/types/events"
 
 export interface EventFiltersValues {
   search: string
@@ -19,23 +18,27 @@ interface EventFiltersProps {
 }
 
 const STATUS_OPTIONS = [
-  { value: "", label: "All statuses" },
-  { value: "draft", label: "Draft" },
-  { value: "published", label: "Published" },
-  { value: "completed", label: "Completed" },
-  { value: "archived", label: "Archived" },
+  { value: "", label: "Все статусы" },
+  { value: "draft", label: "Черновик" },
+  { value: "published", label: "Опубликовано" },
+  { value: "completed", label: "Завершено" },
+  { value: "archived", label: "В архиве" },
 ]
 
 const SORT_OPTIONS = [
-  { value: "date", label: "Date (ascending)" },
-  { value: "-date", label: "Date (descending)" },
-  { value: "title", label: "Title (A-Z)" },
-  { value: "-title", label: "Title (Z-A)" },
-  { value: "created_at", label: "Created (ascending)" },
-  { value: "-created_at", label: "Created (descending)" },
+  { value: "date", label: "Дата (возрастание)" },
+  { value: "-date", label: "Дата (убывание)" },
+  { value: "title", label: "Название (А-Я)" },
+  { value: "-title", label: "Название (Я-А)" },
+  { value: "created_at", label: "Создан (возрастание)" },
+  { value: "-created_at", label: "Создан (убывание)" },
 ]
 
-export function EventFilters({ values, onChange, onClear }: EventFiltersProps) {
+export function EventFilters({
+  values,
+  onChange,
+  onClear,
+}: EventFiltersProps) {
   const searchTimerRef = useRef<NodeJS.Timeout | null>(null)
 
   const handleSearchInput = (search: string) => {
@@ -51,13 +54,14 @@ export function EventFilters({ values, onChange, onClear }: EventFiltersProps) {
     }
   }, [])
 
-  const hasFilters = values.search || values.status || values.sort !== "date"
+  const hasFilters =
+    values.search || values.status || values.sort !== "date"
 
   return (
     <div className="flex flex-wrap items-end gap-3">
       <div className="min-w-[200px] flex-1">
         <Input
-          placeholder="Search events..."
+          placeholder="Поиск мероприятий..."
           defaultValue={values.search}
           onChange={(e) => handleSearchInput(e.target.value)}
         />
@@ -78,7 +82,7 @@ export function EventFilters({ values, onChange, onClear }: EventFiltersProps) {
       </div>
       {hasFilters && (
         <Button variant="ghost" size="sm" onClick={onClear}>
-          Clear
+          Сбросить
         </Button>
       )}
     </div>

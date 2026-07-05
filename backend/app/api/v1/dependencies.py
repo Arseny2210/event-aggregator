@@ -86,7 +86,8 @@ async def get_event_service(
 ) -> EventService:
     event_repo = EventRepository(session)
     organizer_repo = OrganizerRepository(session)
-    return EventService(session, event_repo, organizer_repo)
+    participation_repo = ParticipationRepository(session)
+    return EventService(session, event_repo, organizer_repo, participation_repo)
 
 
 async def get_participation_service(

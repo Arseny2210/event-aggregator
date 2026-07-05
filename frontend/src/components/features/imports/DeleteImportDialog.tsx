@@ -13,7 +13,10 @@ interface DeleteImportButtonProps {
   importFilename: string
 }
 
-export function DeleteImportButton({ importId, importFilename }: DeleteImportButtonProps) {
+export function DeleteImportButton({
+  importId,
+  importFilename,
+}: DeleteImportButtonProps) {
   const [open, setOpen] = useState(false)
   const router = useRouter()
   const deleteImport = useDeleteImport()
@@ -28,18 +31,32 @@ export function DeleteImportButton({ importId, importFilename }: DeleteImportBut
     <>
       <Button variant="danger" size="sm" onClick={() => setOpen(true)}>
         <Trash2 className="mr-1 h-4 w-4" />
-        Delete
+        Удалить
       </Button>
-      <Modal open={open} onClose={() => setOpen(false)} title="Delete Import">
+      <Modal
+        open={open}
+        onClose={() => setOpen(false)}
+        title="Удаление импорта"
+      >
         <div className="space-y-4">
-          {deleteImport.error && <Alert variant="error">{deleteImport.error.message}</Alert>}
-          <p className="text-sm text-slate-600">
-            Delete <strong>{importFilename}</strong>? This action cannot be undone.
+          {deleteImport.error && (
+            <Alert variant="error">{deleteImport.error.message}</Alert>
+          )}
+          <p className="text-sm text-foreground-secondary">
+            Удалить{" "}
+            <strong className="text-foreground">{importFilename}</strong>? Это
+            действие нельзя отменить.
           </p>
           <div className="flex justify-end gap-3">
-            <Button variant="secondary" onClick={() => setOpen(false)}>Cancel</Button>
-            <Button variant="danger" onClick={handleDelete} isLoading={deleteImport.isPending}>
-              Delete
+            <Button variant="secondary" onClick={() => setOpen(false)}>
+              Отмена
+            </Button>
+            <Button
+              variant="danger"
+              onClick={handleDelete}
+              isLoading={deleteImport.isPending}
+            >
+              Удалить
             </Button>
           </div>
         </div>

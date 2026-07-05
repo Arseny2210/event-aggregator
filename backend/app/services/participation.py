@@ -15,6 +15,7 @@ from app.services.exceptions import (
     DuplicateParticipationError,
     EventNotFoundError,
     ParticipationNotFoundError,
+    ParticipationNotEnabledError,
     RegistrationClosedError,
 )
 from app.services.transaction import transactional
@@ -48,6 +49,8 @@ class ParticipationService:
         event = await self.event_repository.get_by_id(event_id)
         if event is None:
             raise EventNotFoundError(event_id)
+        if not event.participation_enabled:
+            raise ParticipationNotEnabledError(event_id)
         if event.status == EventStatus.archived:
             raise CannotRegisterForArchivedEventError(event_id)
         if event.start_date < date.today():
@@ -83,6 +86,17 @@ class ParticipationService:
 
     async def list_participations_for_session(self, session_id: str) -> list[Participation]:
         return await self.repository.get_by_session(session_id)
+
+    async def get_participation_by_event_and_session(
+        self, event_id: UUID, session_id: str
+    ) -> Participation:
+        participation = await self.repository.get_by_event_and_session(event_id, session_id)
+        if participation is None:
+            raise ParticipationNotFoundError(event_id=event_id, session_id=session_id)
+        return participation
+
+    async def count_by_event(self, event_id: UUID) -> int:
+        return await self.repository.count_by_event(event_id)
 
     async def get_participation_statistics(self, event_id: UUID) -> ParticipationStatistics:
         event = await self.event_repository.get_by_id(event_id)

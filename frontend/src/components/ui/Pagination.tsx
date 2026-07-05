@@ -1,3 +1,5 @@
+"use client"
+
 import { cn } from "@/utils/cn"
 import { Button } from "@/components/ui/Button"
 
@@ -17,15 +19,17 @@ export function Pagination({ offset, limit, total, onPrevious, onNext }: Paginat
 
   return (
     <div className="flex items-center justify-between">
-      <p className="text-sm text-slate-600">
-        {total === 0 ? "No results" : `Showing ${from}-${to} of ${total}`}
+      <p className="text-sm text-foreground-secondary">
+        {total === 0
+          ? "Нет результатов"
+          : `${from}–${to} из ${total}`}
       </p>
       <div className="flex gap-2">
         <Button variant="secondary" size="sm" onClick={onPrevious} disabled={!hasPrevious}>
-          Previous
+          Назад
         </Button>
         <Button variant="secondary" size="sm" onClick={onNext} disabled={!hasNext}>
-          Next
+          Вперёд
         </Button>
       </div>
     </div>
