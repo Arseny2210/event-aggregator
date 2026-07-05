@@ -2,11 +2,16 @@ import asyncio
 import os
 from logging.config import fileConfig
 
+from dotenv import load_dotenv
+
+load_dotenv()
+
 from alembic import context
 from sqlalchemy import Connection
 from sqlalchemy.ext.asyncio import create_async_engine
 
 from app.database.base import Base
+from app.models import *  # noqa: E402, F401, F403 — register all models with Base.metadata
 
 config = context.config
 

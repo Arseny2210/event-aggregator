@@ -51,10 +51,10 @@ export interface SendTestNotificationDto {
 }
 
 export const NOTIF_STATUS_LABELS: Record<NotificationStatus, string> = {
-  pending: "Pending",
-  sent: "Sent",
-  failed: "Failed",
-  retrying: "Retrying",
+  pending: "Ожидание",
+  sent: "Отправлено",
+  failed: "Ошибка",
+  retrying: "Повтор",
 }
 
 export const NOTIF_STATUS_COLORS: Record<NotificationStatus, string> = {
@@ -65,10 +65,10 @@ export const NOTIF_STATUS_COLORS: Record<NotificationStatus, string> = {
 }
 
 export const NOTIF_PRIORITY_LABELS: Record<NotificationPriority, string> = {
-  low: "Low",
-  normal: "Normal",
-  high: "High",
-  critical: "Critical",
+  low: "Низкий",
+  normal: "Обычный",
+  high: "Высокий",
+  critical: "Критический",
 }
 
 export const NOTIF_PRIORITY_COLORS: Record<NotificationPriority, string> = {
@@ -81,14 +81,14 @@ export const NOTIF_PRIORITY_COLORS: Record<NotificationPriority, string> = {
 export const NOTIF_CHANNEL_LABELS: Record<NotificationChannelType, string> = {
   email: "Email",
   telegram: "Telegram",
-  in_app: "In-App",
+  in_app: "В приложении",
 }
 
 export const NOTIF_TEMPLATE_LABELS: Record<NotificationTemplateType, string> = {
-  welcome: "Welcome",
-  password_reset: "Password Reset",
-  event_published: "Event Published",
-  event_reminder: "Event Reminder",
-  import_completed: "Import Completed",
-  import_failed: "Import Failed",
+  welcome: "Приветствие",
+  password_reset: "Сброс пароля",
+  event_published: "Мероприятие опубликовано",
+  event_reminder: "Напоминание о мероприятии",
+  import_completed: "Импорт завершён",
+  import_failed: "Ошибка импорта",
 }

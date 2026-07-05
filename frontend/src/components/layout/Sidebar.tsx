@@ -2,26 +2,24 @@
 
 import Link from "next/link"
 import { usePathname } from "next/navigation"
+import { motion, AnimatePresence } from "framer-motion"
 import { cn } from "@/utils/cn"
 import { useUIStore } from "@/lib/store/ui"
 import {
-  BarChart3,
   Bell,
+  GraduationCap,
   Home,
   LayoutDashboard,
   Menu,
   Upload,
-  Users,
   X,
 } from "lucide-react"
 
 const navItems = [
-  { href: "/dashboard", label: "Dashboard", icon: Home },
-  { href: "/dashboard/events", label: "Events", icon: LayoutDashboard },
-  { href: "/dashboard/imports", label: "Imports", icon: Upload },
-  { href: "/dashboard/notifications", label: "Notifications", icon: Bell },
-  { href: "/dashboard/statistics", label: "Statistics", icon: BarChart3 },
-  { href: "/dashboard/users", label: "Users", icon: Users },
+  { href: "/dashboard", label: "Главная", icon: Home },
+  { href: "/dashboard/events", label: "Мероприятия", icon: LayoutDashboard },
+  { href: "/dashboard/imports", label: "Импорт", icon: Upload },
+  { href: "/dashboard/notifications", label: "Уведомления", icon: Bell },
 ]
 
 export function Sidebar() {
@@ -30,30 +28,44 @@ export function Sidebar() {
 
   return (
     <>
-      <button
+      <motion.button
+        whileHover={{ scale: 1.05 }}
+        whileTap={{ scale: 0.95 }}
         onClick={toggleSidebar}
-        className="fixed left-4 top-4 z-50 rounded-lg border border-slate-200 bg-white p-2 lg:hidden"
-        aria-label="Toggle sidebar"
+        className="fixed left-4 top-4 z-50 rounded-xl border border-border bg-white p-2 shadow-sm lg:hidden"
+        aria-label="Открыть меню"
       >
-        {sidebarOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
-      </button>
+        {sidebarOpen ? (
+          <X className="h-5 w-5 text-foreground" />
+        ) : (
+          <Menu className="h-5 w-5 text-foreground" />
+        )}
+      </motion.button>
 
-      {sidebarOpen && (
-        <div
-          className="fixed inset-0 z-30 bg-black/30 lg:hidden"
-          onClick={closeSidebar}
-        />
-      )}
+      <AnimatePresence>
+        {sidebarOpen && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-30 bg-black/30 backdrop-blur-sm lg:hidden"
+            onClick={closeSidebar}
+          />
+        )}
+      </AnimatePresence>
 
       <aside
         className={cn(
-          "fixed left-0 top-0 z-40 h-full w-64 transform border-r border-slate-200 bg-white transition-transform duration-200 lg:relative lg:translate-x-0",
+          "fixed left-0 top-0 z-40 h-full w-64 transform border-r border-border bg-white transition-transform duration-300 lg:relative lg:translate-x-0",
           sidebarOpen ? "translate-x-0" : "-translate-x-full",
         )}
       >
-        <div className="flex h-16 items-center border-b border-slate-200 px-6">
-          <Link href="/dashboard" className="text-lg font-bold text-slate-900">
-            Event Aggregator
+        <div className="flex h-16 items-center gap-2 border-b border-border px-6">
+          <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary-600 text-white">
+            <GraduationCap className="h-5 w-5" />
+          </div>
+          <Link href="/dashboard" className="text-lg font-bold text-foreground">
+            ИС «Мероприятия»
           </Link>
         </div>
 
@@ -69,10 +81,10 @@ export function Sidebar() {
                 href={item.href}
                 onClick={closeSidebar}
                 className={cn(
-                  "flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-colors",
+                  "flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium transition-all",
                   isActive
-                    ? "bg-blue-50 text-blue-700"
-                    : "text-slate-600 hover:bg-slate-100 hover:text-slate-900",
+                    ? "bg-primary-50 text-primary-700"
+                    : "text-foreground-secondary hover:bg-surface-tertiary hover:text-foreground",
                 )}
               >
                 <Icon className="h-4 w-4" />

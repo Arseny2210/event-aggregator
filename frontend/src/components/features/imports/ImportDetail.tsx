@@ -1,7 +1,7 @@
 "use client"
 
 import Link from "next/link"
-import { ArrowLeft, List, Trash2 } from "lucide-react"
+import { ArrowLeft } from "lucide-react"
 import { Card, CardHeader, CardTitle } from "@/components/ui/Card"
 import { Badge } from "@/components/ui/Badge"
 import { Progress } from "@/components/ui/Progress"
@@ -32,11 +32,15 @@ export function ImportDetail({ importId }: ImportDetailProps) {
   }
 
   if (error) {
-    return <Alert variant="error">Failed to load import: {error.message}</Alert>
+    return (
+      <Alert variant="error">
+        Ошибка загрузки импорта: {error.message}
+      </Alert>
+    )
   }
 
   if (!job) {
-    return <Alert variant="error">Import not found</Alert>
+    return <Alert variant="error">Импорт не найден</Alert>
   }
 
   return (
@@ -45,12 +49,15 @@ export function ImportDetail({ importId }: ImportDetailProps) {
         <Link href="/dashboard/imports">
           <Button variant="ghost" size="sm">
             <ArrowLeft className="mr-1 h-4 w-4" />
-            Back
+            Назад
           </Button>
         </Link>
         {isAdmin && (
           <div className="ml-auto">
-            <DeleteImportButton importId={job.id} importFilename={job.filename} />
+            <DeleteImportButton
+              importId={job.id}
+              importFilename={job.filename}
+            />
           </div>
         )}
       </div>
@@ -60,7 +67,9 @@ export function ImportDetail({ importId }: ImportDetailProps) {
           <div className="flex items-start justify-between">
             <div>
               <CardTitle className="text-xl">{job.filename}</CardTitle>
-              <Badge className={`mt-2 ${IMPORT_STATUS_COLORS[job.status]}`}>
+              <Badge
+                className={`mt-2 ${IMPORT_STATUS_COLORS[job.status]}`}
+              >
                 {IMPORT_STATUS_LABELS[job.status]}
               </Badge>
             </div>
@@ -70,31 +79,42 @@ export function ImportDetail({ importId }: ImportDetailProps) {
 
       <Card>
         <CardHeader>
-          <CardTitle>Progress</CardTitle>
+          <CardTitle>Прогресс</CardTitle>
         </CardHeader>
         <div className="space-y-4">
           <div className="flex items-center gap-3">
-            <Progress value={job.summary.progress_percent} className="flex-1" />
-            <span className="text-sm font-medium text-slate-700">
+            <Progress
+              value={job.summary.progress_percent}
+              className="flex-1"
+            />
+            <span className="text-sm font-medium text-foreground">
               {job.summary.progress_percent}%
             </span>
           </div>
           <div className="grid grid-cols-2 gap-4 text-sm sm:grid-cols-4">
             <div>
-              <dt className="text-slate-500">Total</dt>
-              <dd className="font-medium text-slate-900">{job.summary.total_rows}</dd>
+              <dt className="text-foreground-muted">Всего</dt>
+              <dd className="font-medium text-foreground">
+                {job.summary.total_rows}
+              </dd>
             </div>
             <div>
-              <dt className="text-slate-500">Processed</dt>
-              <dd className="font-medium text-slate-900">{job.summary.processed_rows}</dd>
+              <dt className="text-foreground-muted">Обработано</dt>
+              <dd className="font-medium text-foreground">
+                {job.summary.processed_rows}
+              </dd>
             </div>
             <div>
-              <dt className="text-slate-500">Imported</dt>
-              <dd className="font-medium text-green-600">{job.summary.imported_rows}</dd>
+              <dt className="text-foreground-muted">Импортировано</dt>
+              <dd className="font-medium text-green-600">
+                {job.summary.imported_rows}
+              </dd>
             </div>
             <div>
-              <dt className="text-slate-500">Failed</dt>
-              <dd className="font-medium text-red-600">{job.summary.failed_rows}</dd>
+              <dt className="text-foreground-muted">Ошибок</dt>
+              <dd className="font-medium text-red-600">
+                {job.summary.failed_rows}
+              </dd>
             </div>
           </div>
         </div>
@@ -103,24 +123,28 @@ export function ImportDetail({ importId }: ImportDetailProps) {
       {(job.summary.started_at || job.summary.finished_at) && (
         <Card>
           <CardHeader>
-            <CardTitle>Timing</CardTitle>
+            <CardTitle>Время</CardTitle>
           </CardHeader>
           <dl className="grid grid-cols-2 gap-4 text-sm sm:grid-cols-3">
             {job.summary.started_at && (
               <div>
-                <dt className="text-slate-500">Started</dt>
-                <dd className="text-slate-900">{new Date(job.summary.started_at).toLocaleString()}</dd>
+                <dt className="text-foreground-muted">Начало</dt>
+                <dd className="text-foreground">
+                  {new Date(job.summary.started_at).toLocaleString("ru-RU")}
+                </dd>
               </div>
             )}
             {job.summary.finished_at && (
               <div>
-                <dt className="text-slate-500">Finished</dt>
-                <dd className="text-slate-900">{new Date(job.summary.finished_at).toLocaleString()}</dd>
+                <dt className="text-foreground-muted">Окончание</dt>
+                <dd className="text-foreground">
+                  {new Date(job.summary.finished_at).toLocaleString("ru-RU")}
+                </dd>
               </div>
             )}
             <div>
-              <dt className="text-slate-500">Duration</dt>
-              <dd className="text-slate-900">{job.summary.duration}s</dd>
+              <dt className="text-foreground-muted">Длительность</dt>
+              <dd className="text-foreground">{job.summary.duration}с</dd>
             </div>
           </dl>
         </Card>

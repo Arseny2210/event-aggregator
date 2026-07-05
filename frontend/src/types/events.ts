@@ -1,3 +1,5 @@
+import type { Category } from "@/types/categories"
+
 export type EventStatus = "draft" | "published" | "completed" | "archived"
 
 export interface Event {
@@ -14,6 +16,10 @@ export interface Event {
   status: EventStatus
   organizer_id: string
   category_id: string
+  category: Category
+  target_audience?: string | null
+  participation_enabled: boolean
+  participants_count: number
   created_at: string
   updated_at: string
 }
@@ -44,15 +50,17 @@ export interface CreateEventDto {
   status?: EventStatus
   organizer_id: string
   category_id: string
+  target_audience?: string | null
+  participation_enabled?: boolean
 }
 
 export type UpdateEventDto = Partial<CreateEventDto>
 
 export const EVENT_STATUS_LABELS: Record<EventStatus, string> = {
-  draft: "Draft",
-  published: "Published",
-  completed: "Completed",
-  archived: "Archived",
+  draft: "Черновик",
+  published: "Опубликовано",
+  completed: "Завершено",
+  archived: "В архиве",
 }
 
 export const EVENT_STATUS_COLORS: Record<EventStatus, string> = {

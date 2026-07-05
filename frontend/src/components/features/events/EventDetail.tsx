@@ -30,11 +30,15 @@ export function EventDetail({ eventId }: EventDetailProps) {
   }
 
   if (error) {
-    return <Alert variant="error">Failed to load event: {error.message}</Alert>
+    return (
+      <Alert variant="error">
+        Ошибка загрузки мероприятия: {error.message}
+      </Alert>
+    )
   }
 
   if (!event) {
-    return <Alert variant="error">Event not found</Alert>
+    return <Alert variant="error">Мероприятие не найдено</Alert>
   }
 
   return (
@@ -43,7 +47,7 @@ export function EventDetail({ eventId }: EventDetailProps) {
         <Link href="/dashboard/events">
           <Button variant="ghost" size="sm">
             <ArrowLeft className="mr-1 h-4 w-4" />
-            Back
+            Назад
           </Button>
         </Link>
         {canManage && (
@@ -51,10 +55,13 @@ export function EventDetail({ eventId }: EventDetailProps) {
             <Link href={`/dashboard/events/${event.id}/edit`}>
               <Button variant="secondary" size="sm">
                 <Pencil className="mr-1 h-4 w-4" />
-                Edit
+                Редактировать
               </Button>
             </Link>
-            <DeleteEventButton eventId={event.id} eventTitle={event.title} />
+            <DeleteEventButton
+              eventId={event.id}
+              eventTitle={event.title}
+            />
           </div>
         )}
       </div>
@@ -64,7 +71,9 @@ export function EventDetail({ eventId }: EventDetailProps) {
           <div className="flex items-start justify-between">
             <div>
               <CardTitle className="text-xl">{event.title}</CardTitle>
-              <Badge className={`mt-2 ${EVENT_STATUS_COLORS[event.status]}`}>
+              <Badge
+                className={`mt-2 ${EVENT_STATUS_COLORS[event.status]}`}
+              >
                 {EVENT_STATUS_LABELS[event.status]}
               </Badge>
             </div>
@@ -75,43 +84,62 @@ export function EventDetail({ eventId }: EventDetailProps) {
       <div className="grid gap-6 lg:grid-cols-2">
         <Card>
           <CardHeader>
-            <CardTitle>Details</CardTitle>
+            <CardTitle>Детали</CardTitle>
           </CardHeader>
           <dl className="space-y-3 text-sm">
             <div>
-              <dt className="font-medium text-slate-600">Date</dt>
-              <dd className="text-slate-900">{event.start_date}{event.start_time ? ` at ${event.start_time}` : ""}</dd>
+              <dt className="font-medium text-foreground-secondary">Дата</dt>
+              <dd className="text-foreground">
+                {new Date(event.start_date).toLocaleDateString("ru-RU")}
+                {event.start_time ? ` в ${event.start_time}` : ""}
+              </dd>
             </div>
             {event.end_time && (
               <div>
-                <dt className="font-medium text-slate-600">End Time</dt>
-                <dd className="text-slate-900">{event.end_time}</dd>
+                <dt className="font-medium text-foreground-secondary">
+                  Время окончания
+                </dt>
+                <dd className="text-foreground">{event.end_time}</dd>
               </div>
             )}
             <div>
-              <dt className="font-medium text-slate-600">Location</dt>
-              <dd className="text-slate-900">{event.location}</dd>
+              <dt className="font-medium text-foreground-secondary">
+                Место
+              </dt>
+              <dd className="text-foreground">{event.location}</dd>
             </div>
             <div>
-              <dt className="font-medium text-slate-600">Organizer</dt>
-              <dd className="text-slate-900 font-mono text-xs">{event.organizer_id}</dd>
+              <dt className="font-medium text-foreground-secondary">
+                Организатор
+              </dt>
+              <dd className="font-mono text-xs text-foreground">
+                {event.organizer_id}
+              </dd>
             </div>
             <div>
-              <dt className="font-medium text-slate-600">Category</dt>
-              <dd className="text-slate-900 font-mono text-xs">{event.category_id}</dd>
+              <dt className="font-medium text-foreground-secondary">
+                Категория
+              </dt>
+              <dd className="font-mono text-xs text-foreground">
+                {event.category_id}
+              </dd>
             </div>
           </dl>
         </Card>
 
         <Card>
           <CardHeader>
-            <CardTitle>Description</CardTitle>
+            <CardTitle>Описание</CardTitle>
           </CardHeader>
           <div className="space-y-3 text-sm">
             {event.short_description && (
-              <p className="text-slate-700">{event.short_description}</p>
+              <p className="text-foreground-secondary">
+                {event.short_description}
+              </p>
             )}
-            <p className="text-slate-900 whitespace-pre-wrap">{event.description}</p>
+            <p className="whitespace-pre-wrap text-foreground">
+              {event.description}
+            </p>
           </div>
         </Card>
       </div>
@@ -119,14 +147,21 @@ export function EventDetail({ eventId }: EventDetailProps) {
       {(event.image_url || event.registration_url) && (
         <Card>
           <CardHeader>
-            <CardTitle>Links</CardTitle>
+            <CardTitle>Ссылки</CardTitle>
           </CardHeader>
           <dl className="space-y-2 text-sm">
             {event.image_url && (
               <div>
-                <dt className="font-medium text-slate-600">Image</dt>
+                <dt className="font-medium text-foreground-secondary">
+                  Изображение
+                </dt>
                 <dd>
-                  <a href={event.image_url} target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline break-all">
+                  <a
+                    href={event.image_url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="break-all text-primary-600 hover:underline"
+                  >
                     {event.image_url}
                   </a>
                 </dd>
@@ -134,9 +169,16 @@ export function EventDetail({ eventId }: EventDetailProps) {
             )}
             {event.registration_url && (
               <div>
-                <dt className="font-medium text-slate-600">Registration</dt>
+                <dt className="font-medium text-foreground-secondary">
+                  Регистрация
+                </dt>
                 <dd>
-                  <a href={event.registration_url} target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline break-all">
+                  <a
+                    href={event.registration_url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="break-all text-primary-600 hover:underline"
+                  >
                     {event.registration_url}
                   </a>
                 </dd>
@@ -148,20 +190,24 @@ export function EventDetail({ eventId }: EventDetailProps) {
 
       <Card>
         <CardHeader>
-          <CardTitle>Metadata</CardTitle>
+          <CardTitle>Метаданные</CardTitle>
         </CardHeader>
-        <dl className="space-y-2 text-xs text-slate-500">
+        <dl className="space-y-2 text-xs text-foreground-muted">
           <div>
             <dt className="inline font-medium">ID:</dt>
-            <dd className="inline ml-1 font-mono">{event.id}</dd>
+            <dd className="ml-1 inline font-mono">{event.id}</dd>
           </div>
           <div>
-            <dt className="inline font-medium">Created:</dt>
-            <dd className="inline ml-1">{new Date(event.created_at).toLocaleString()}</dd>
+            <dt className="inline font-medium">Создан:</dt>
+            <dd className="ml-1 inline">
+              {new Date(event.created_at).toLocaleString("ru-RU")}
+            </dd>
           </div>
           <div>
-            <dt className="inline font-medium">Updated:</dt>
-            <dd className="inline ml-1">{new Date(event.updated_at).toLocaleString()}</dd>
+            <dt className="inline font-medium">Обновлён:</dt>
+            <dd className="ml-1 inline">
+              {new Date(event.updated_at).toLocaleString("ru-RU")}
+            </dd>
           </div>
         </dl>
       </Card>

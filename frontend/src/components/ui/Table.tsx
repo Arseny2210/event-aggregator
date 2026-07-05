@@ -7,28 +7,50 @@ interface TableProps {
 
 export function Table({ children, className }: TableProps) {
   return (
-    <div className="overflow-x-auto rounded-lg border border-slate-200">
-      <table className={cn("w-full text-left text-sm", className)}>{children}</table>
+    <div className="overflow-x-auto rounded-xl border border-border bg-white shadow-sm">
+      <table className={cn("w-full text-left text-sm", className)}>
+        {children}
+      </table>
     </div>
   )
 }
 
 export function TableHead({ children, className }: TableProps) {
-  return <thead className={cn("border-b border-slate-200 bg-slate-50", className)}>{children}</thead>
+  return (
+    <thead className={cn("border-b border-border bg-surface-secondary", className)}>
+      {children}
+    </thead>
+  )
 }
 
 export function TableBody({ children, className }: TableProps) {
-  return <tbody className={cn("divide-y divide-slate-200", className)}>{children}</tbody>
+  return (
+    <tbody className={cn("divide-y divide-border", className)}>
+      {children}
+    </tbody>
+  )
 }
 
 export function TableRow({ children, className }: TableProps) {
-  return <tr className={cn("hover:bg-slate-50", className)}>{children}</tr>
+  return (
+    <tr className={cn("transition-colors hover:bg-surface-secondary", className)}>
+      {children}
+    </tr>
+  )
 }
 
 export function TableHeader({ children, className }: TableProps) {
-  return <th className={cn("px-4 py-3 font-medium text-slate-600", className)}>{children}</th>
+  return (
+    <th className={cn("px-4 py-3 text-xs font-semibold uppercase tracking-wider text-foreground-secondary", className)}>
+      {children}
+    </th>
+  )
 }
 
 export function TableCell({ children, className }: TableProps) {
-  return <td className={cn("px-4 py-3 text-slate-900", className)}>{children}</td>
+  return (
+    <td className={cn("px-4 py-3 text-foreground", className)}>
+      {children}
+    </td>
+  )
 }

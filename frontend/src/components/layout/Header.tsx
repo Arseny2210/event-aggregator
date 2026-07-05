@@ -3,30 +3,42 @@
 import Link from "next/link"
 import { useAuth } from "@/lib/hooks/useAuth"
 import { Button } from "@/components/ui/Button"
+import { GraduationCap, LogOut, LayoutDashboard } from "lucide-react"
 
 export function Header() {
   const { isAuthenticated, user, logout } = useAuth()
 
   return (
-    <header className="border-b border-slate-200">
-      <nav className="mx-auto flex max-w-6xl items-center justify-between px-4 py-4">
-        <Link href="/" className="text-lg font-bold text-slate-900">
-          Event Aggregator
+    <header className="glass sticky top-0 z-40 border-b border-border">
+      <nav className="mx-auto flex max-w-6xl items-center justify-between px-4 py-3">
+        <Link href="/" className="flex items-center gap-2">
+          <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary-600 text-white">
+            <GraduationCap className="h-5 w-5" />
+          </div>
+          <span className="text-lg font-bold text-foreground">
+            ИС «Мероприятия»
+          </span>
         </Link>
-        <div className="flex items-center gap-4 text-sm font-medium">
+        <div className="flex items-center gap-3 text-sm font-medium">
           {isAuthenticated ? (
             <>
-              <span className="text-slate-600">{user?.email}</span>
+              <span className="text-foreground-secondary">{user?.email}</span>
               <Link href="/dashboard">
-                <Button variant="ghost" size="sm">Dashboard</Button>
+                <Button variant="ghost" size="sm">
+                  <LayoutDashboard className="mr-1.5 h-4 w-4" />
+                  Панель
+                </Button>
               </Link>
               <Button variant="ghost" size="sm" onClick={logout}>
-                Sign Out
+                <LogOut className="mr-1.5 h-4 w-4" />
+                Выйти
               </Button>
             </>
           ) : (
-            <Link href="/login" className="text-slate-600 hover:text-slate-900">
-              Sign In
+            <Link href="/login">
+              <Button variant="ghost" size="sm">
+                Войти
+              </Button>
             </Link>
           )}
         </div>

@@ -1,11 +1,16 @@
+"use client"
+
 import { forwardRef } from "react"
+import { motion } from "framer-motion"
 import { cn } from "@/utils/cn"
 
 const variants = {
-  primary: "bg-blue-600 text-white hover:bg-blue-700",
-  secondary: "bg-slate-100 text-slate-900 hover:bg-slate-200",
-  ghost: "bg-transparent text-slate-700 hover:bg-slate-100",
-  danger: "bg-red-600 text-white hover:bg-red-700",
+  primary:
+    "bg-primary-600 text-white hover:bg-primary-700 shadow-sm shadow-primary-200",
+  secondary:
+    "bg-white text-foreground border border-border hover:bg-surface-tertiary shadow-sm",
+  ghost: "bg-transparent text-foreground-secondary hover:bg-surface-tertiary",
+  danger: "bg-red-600 text-white hover:bg-red-700 shadow-sm shadow-red-200",
 } as const
 
 const sizes = {
@@ -23,16 +28,18 @@ interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
 export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
   ({ className, variant = "primary", size = "md", isLoading, children, disabled, ...props }, ref) => {
     return (
-      <button
+      <motion.button
         ref={ref}
+        whileHover={disabled ? undefined : { scale: 1.02 }}
+        whileTap={disabled ? undefined : { scale: 0.98 }}
         className={cn(
-          "inline-flex items-center justify-center rounded-lg font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:pointer-events-none disabled:opacity-50",
+          "inline-flex items-center justify-center rounded-xl font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 disabled:pointer-events-none disabled:opacity-50",
           variants[variant],
           sizes[size],
           className,
         )}
         disabled={disabled || isLoading}
-        {...props}
+        {...(props as React.ComponentProps<typeof motion.button>)}
       >
         {isLoading && (
           <svg className="mr-2 h-4 w-4 animate-spin" viewBox="0 0 24 24">
@@ -41,7 +48,7 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
           </svg>
         )}
         {children}
-      </button>
+      </motion.button>
     )
   },
 )

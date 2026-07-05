@@ -1,8 +1,16 @@
 "use client"
 
 import Link from "next/link"
-import { Eye, Pencil, Trash2 } from "lucide-react"
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/Table"
+import { motion } from "framer-motion"
+import { Eye, Pencil } from "lucide-react"
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/Table"
 import { Badge } from "@/components/ui/Badge"
 import { Pagination } from "@/components/ui/Pagination"
 import { Spinner } from "@/components/ui/Spinner"
@@ -10,6 +18,7 @@ import { Alert } from "@/components/ui/Alert"
 import { Button } from "@/components/ui/Button"
 import { useAuth } from "@/lib/hooks/useAuth"
 import { useEvents } from "@/lib/hooks/useEvents"
+import { EmptyState } from "@/components/layout/EmptyState"
 import type { EventSearchParams } from "@/types/events"
 import { EVENT_STATUS_COLORS, EVENT_STATUS_LABELS } from "@/types/events"
 
@@ -32,34 +41,46 @@ export function EventList({ params, onPageChange }: EventListProps) {
   }
 
   if (error) {
-    return <Alert variant="error">Failed to load events: {error.message}</Alert>
+    return (
+      <Alert variant="error">
+        Ошибка загрузки мероприятий: {error.message}
+      </Alert>
+    )
   }
 
   if (!data || data.items.length === 0) {
     return (
-      <div className="py-12 text-center">
-        <p className="text-slate-500">No events found.</p>
-      </div>
+      <EmptyState
+        title="Мероприятия не найдены"
+        description="Попробуйте изменить параметры поиска"
+      />
     )
   }
 
   return (
-    <div className="space-y-4">
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      className="space-y-4"
+    >
       <Table>
         <TableHead>
           <TableRow>
-            <TableHeader>Title</TableHeader>
-            <TableHeader>Date</TableHeader>
-            <TableHeader>Location</TableHeader>
-            <TableHeader>Status</TableHeader>
-            <TableHeader className="w-24">Actions</TableHeader>
+            <TableHeader>Название</TableHeader>
+            <TableHeader>Дата</TableHeader>
+            <TableHeader>Место</TableHeader>
+            <TableHeader>Статус</TableHeader>
+            <TableHeader className="w-24">Действия</TableHeader>
           </TableRow>
         </TableHead>
         <TableBody>
           {data.items.map((event) => (
             <TableRow key={event.id}>
               <TableCell className="font-medium">{event.title}</TableCell>
-              <TableCell>{event.start_date}</TableCell>
+              <TableCell>
+                {new Date(event.start_date).toLocaleDateString("ru-RU")}
+                {event.start_time ? ` ${event.start_time}` : ""}
+              </TableCell>
               <TableCell>{event.location}</TableCell>
               <TableCell>
                 <Badge className={EVENT_STATUS_COLORS[event.status]}>
@@ -69,18 +90,20 @@ export function EventList({ params, onPageChange }: EventListProps) {
               <TableCell>
                 <div className="flex gap-1">
                   <Link href={`/dashboard/events/${event.id}`}>
-                    <Button variant="ghost" size="sm" aria-label="View event">
+                    <Button variant="ghost" size="sm" aria-label="Просмотр">
                       <Eye className="h-4 w-4" />
                     </Button>
                   </Link>
                   {canManage && (
-                    <>
-                      <Link href={`/dashboard/events/${event.id}/edit`}>
-                        <Button variant="ghost" size="sm" aria-label="Edit event">
-                          <Pencil className="h-4 w-4" />
-                        </Button>
-                      </Link>
-                    </>
+                    <Link href={`/dashboard/events/${event.id}/edit`}>
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        aria-label="Редактировать"
+                      >
+                        <Pencil className="h-4 w-4" />
+                      </Button>
+                    </Link>
                   )}
                 </div>
               </TableCell>
@@ -93,9 +116,15 @@ export function EventList({ params, onPageChange }: EventListProps) {
         offset={data.offset}
         limit={data.limit}
         total={data.total}
-        onPrevious={() => onPageChange(Math.max(0, (params.offset || 0) - (params.limit || 20)))}
-        onNext={() => onPageChange((params.offset || 0) + (params.limit || 20))}
+        onPrevious={() =>
+          onPageChange(
+            Math.max(0, (params.offset || 0) - (params.limit || 20)),
+          )
+        }
+        onNext={() =>
+          onPageChange((params.offset || 0) + (params.limit || 20))
+        }
       />
-    </div>
+    </motion.div>
   )
 }

@@ -7,6 +7,7 @@ from pydantic import Field
 
 from app.models.enums import EventStatus
 from app.schemas.base import BaseSchema, TimestampSchema
+from app.schemas.category import CategoryResponse
 
 
 class EventBase(BaseSchema):
@@ -20,6 +21,8 @@ class EventBase(BaseSchema):
     image_url: str | None = Field(default=None, max_length=2000)
     registration_url: str | None = Field(default=None, max_length=2000)
     status: EventStatus = Field(default=EventStatus.draft)
+    target_audience: str | None = Field(default=None, max_length=100)
+    participation_enabled: bool = Field(default=True)
 
 
 class EventCreate(EventBase):
@@ -41,10 +44,15 @@ class EventUpdate(BaseSchema):
     status: EventStatus | None = Field(default=None)
     organizer_id: uuid.UUID | None = Field(default=None)
     category_id: uuid.UUID | None = Field(default=None)
+    target_audience: str | None = Field(default=None, max_length=100)
+    participation_enabled: bool | None = Field(default=None)
 
 
 class EventResponse(EventBase, TimestampSchema):
     id: uuid.UUID
     organizer_id: uuid.UUID
     category_id: uuid.UUID
+    category: CategoryResponse
     description: str = Field(max_length=10000)
+    target_audience: str | None = None
+    participants_count: int = 0

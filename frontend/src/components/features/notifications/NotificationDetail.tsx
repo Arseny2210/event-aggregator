@@ -21,7 +21,9 @@ interface NotificationDetailProps {
   notificationId: string
 }
 
-export function NotificationDetail({ notificationId }: NotificationDetailProps) {
+export function NotificationDetail({
+  notificationId,
+}: NotificationDetailProps) {
   const { data: notif, isLoading, error } = useNotification(notificationId)
 
   if (isLoading) {
@@ -33,11 +35,15 @@ export function NotificationDetail({ notificationId }: NotificationDetailProps) 
   }
 
   if (error) {
-    return <Alert variant="error">Failed to load notification: {error.message}</Alert>
+    return (
+      <Alert variant="error">
+        Ошибка загрузки уведомления: {error.message}
+      </Alert>
+    )
   }
 
   if (!notif) {
-    return <Alert variant="error">Notification not found</Alert>
+    return <Alert variant="error">Уведомление не найдено</Alert>
   }
 
   return (
@@ -46,7 +52,7 @@ export function NotificationDetail({ notificationId }: NotificationDetailProps) 
         <Link href="/dashboard/notifications">
           <Button variant="ghost" size="sm">
             <ArrowLeft className="mr-1 h-4 w-4" />
-            Back
+            Назад
           </Button>
         </Link>
       </div>
@@ -56,7 +62,8 @@ export function NotificationDetail({ notificationId }: NotificationDetailProps) 
           <div className="flex items-start gap-3">
             <div className="flex-1">
               <CardTitle className="text-xl">
-                {notif.subject || NOTIF_TEMPLATE_LABELS[notif.template_type]}
+                {notif.subject ||
+                  NOTIF_TEMPLATE_LABELS[notif.template_type]}
               </CardTitle>
               <div className="mt-2 flex gap-2">
                 <Badge className={NOTIF_STATUS_COLORS[notif.status]}>
@@ -74,33 +81,45 @@ export function NotificationDetail({ notificationId }: NotificationDetailProps) 
       <div className="grid gap-6 lg:grid-cols-2">
         <Card>
           <CardHeader>
-            <CardTitle>Details</CardTitle>
+            <CardTitle>Детали</CardTitle>
           </CardHeader>
           <dl className="space-y-3 text-sm">
             <div>
-              <dt className="font-medium text-slate-600">Recipient</dt>
-              <dd className="text-slate-900">{notif.recipient}</dd>
+              <dt className="font-medium text-foreground-secondary">
+                Получатель
+              </dt>
+              <dd className="text-foreground">{notif.recipient}</dd>
             </div>
             <div>
-              <dt className="font-medium text-slate-600">Channel</dt>
-              <dd className="text-slate-900">{NOTIF_CHANNEL_LABELS[notif.channel]}</dd>
+              <dt className="font-medium text-foreground-secondary">
+                Канал
+              </dt>
+              <dd className="text-foreground">
+                {NOTIF_CHANNEL_LABELS[notif.channel]}
+              </dd>
             </div>
             <div>
-              <dt className="font-medium text-slate-600">Template</dt>
-              <dd className="text-slate-900">{NOTIF_TEMPLATE_LABELS[notif.template_type]}</dd>
+              <dt className="font-medium text-foreground-secondary">
+                Шаблон
+              </dt>
+              <dd className="text-foreground">
+                {NOTIF_TEMPLATE_LABELS[notif.template_type]}
+              </dd>
             </div>
             <div>
-              <dt className="font-medium text-slate-600">Attempts</dt>
-              <dd className="text-slate-900">{notif.attempts}</dd>
+              <dt className="font-medium text-foreground-secondary">
+                Попытки
+              </dt>
+              <dd className="text-foreground">{notif.attempts}</dd>
             </div>
           </dl>
         </Card>
 
         <Card>
           <CardHeader>
-            <CardTitle>Payload</CardTitle>
+            <CardTitle>Данные</CardTitle>
           </CardHeader>
-          <pre className="overflow-auto text-xs text-slate-700 whitespace-pre-wrap max-h-64">
+          <pre className="max-h-64 overflow-auto whitespace-pre-wrap text-xs text-foreground">
             {JSON.stringify(notif.payload, null, 2)}
           </pre>
         </Card>
@@ -109,7 +128,7 @@ export function NotificationDetail({ notificationId }: NotificationDetailProps) 
       {notif.error_message && (
         <Card>
           <CardHeader>
-            <CardTitle>Error</CardTitle>
+            <CardTitle>Ошибка</CardTitle>
           </CardHeader>
           <p className="text-sm text-red-700">{notif.error_message}</p>
         </Card>
@@ -117,19 +136,25 @@ export function NotificationDetail({ notificationId }: NotificationDetailProps) 
 
       <dl className="grid grid-cols-3 gap-4 text-sm">
         <div>
-          <dt className="text-slate-500">Created</dt>
-          <dd className="text-slate-900">{new Date(notif.created_at).toLocaleString()}</dd>
+          <dt className="text-foreground-muted">Создано</dt>
+          <dd className="text-foreground">
+            {new Date(notif.created_at).toLocaleString("ru-RU")}
+          </dd>
         </div>
         {notif.sent_at && (
           <div>
-            <dt className="text-slate-500">Sent</dt>
-            <dd className="text-slate-900">{new Date(notif.sent_at).toLocaleString()}</dd>
+            <dt className="text-foreground-muted">Отправлено</dt>
+            <dd className="text-foreground">
+              {new Date(notif.sent_at).toLocaleString("ru-RU")}
+            </dd>
           </div>
         )}
         {notif.scheduled_at && (
           <div>
-            <dt className="text-slate-500">Scheduled</dt>
-            <dd className="text-slate-900">{new Date(notif.scheduled_at).toLocaleString()}</dd>
+            <dt className="text-foreground-muted">Запланировано</dt>
+            <dd className="text-foreground">
+              {new Date(notif.scheduled_at).toLocaleString("ru-RU")}
+            </dd>
           </div>
         )}
       </dl>
