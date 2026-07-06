@@ -48,8 +48,8 @@ export interface CreateEventDto {
   image_url?: string
   registration_url?: string
   status?: EventStatus
-  organizer_id: string
-  category_id: string
+  organizer_id?: string
+  category_id?: string
   target_audience?: string | null
   participation_enabled?: boolean
 }

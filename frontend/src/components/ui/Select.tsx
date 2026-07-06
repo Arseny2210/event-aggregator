@@ -6,11 +6,12 @@ import { cn } from "@/utils/cn"
 interface SelectProps extends React.SelectHTMLAttributes<HTMLSelectElement> {
   label?: string
   error?: string
+  helperText?: string
   options: { value: string; label: string }[]
 }
 
 export const Select = forwardRef<HTMLSelectElement, SelectProps>(
-  ({ className, label, error, id, options, ...props }, ref) => {
+  ({ className, label, error, helperText, id, options, ...props }, ref) => {
     const selectId = id || label?.toLowerCase().replace(/\s+/g, "-")
 
     return (
@@ -38,6 +39,9 @@ export const Select = forwardRef<HTMLSelectElement, SelectProps>(
             </option>
           ))}
         </select>
+        {helperText && !error && (
+          <p className="mt-1.5 text-xs text-foreground-muted">{helperText}</p>
+        )}
         {error && <p className="mt-1.5 text-xs text-red-600">{error}</p>}
       </div>
     )

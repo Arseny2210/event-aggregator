@@ -4,7 +4,7 @@ import { PageTransition } from "@/components/motion/PageTransition"
 import { DashboardCard } from "@/components/features/dashboard/DashboardCard"
 import { RecentActivity } from "@/components/features/dashboard/RecentActivity"
 import { QuickActions } from "@/components/features/dashboard/QuickActions"
-import { Calendar, Bell, Upload, Activity } from "lucide-react"
+import { Calendar, Upload, Activity } from "lucide-react"
 import { useEvents } from "@/lib/hooks/useEvents"
 import { useImports } from "@/lib/hooks/useImports"
 import { useAuth } from "@/lib/hooks/useAuth"
@@ -25,11 +25,11 @@ export default function DashboardPage() {
             С возвращением, {user?.email?.split("@")[0] ?? "пользователь"}
           </h1>
           <p className="mt-1 text-sm text-foreground-secondary">
-            Панель управления информационной системой
+            Панель управления мероприятиями
           </p>
         </div>
 
-        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
           <DashboardCard
             title="Мероприятия"
             value={totalEvents}
@@ -43,13 +43,6 @@ export default function DashboardPage() {
             description="Всего загружено"
             icon={Upload}
             color="green"
-          />
-          <DashboardCard
-            title="Уведомления"
-            value="—"
-            description="За всё время"
-            icon={Bell}
-            color="amber"
           />
           <DashboardCard
             title="Активность"

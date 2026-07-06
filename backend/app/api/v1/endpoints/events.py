@@ -50,7 +50,10 @@ async def list_events(
 
 
 @router.get("/{event_id}", response_model=EventResponse)
-async def get_event(event_id: UUID, event_service=Depends(get_event_service)):
+async def get_event(
+    event_id: UUID,
+    event_service: Annotated[EventService, Depends(get_event_service)],
+):
     return await event_service.get_event_response(event_id)
 
 

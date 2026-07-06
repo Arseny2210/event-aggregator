@@ -27,13 +27,14 @@ class ApiClient {
     const response = await fetch(url, {
       ...options,
       headers,
+      credentials: "include",
     })
 
     if (response.status === 401 && token) {
       const refreshed = await this.tryRefresh()
       if (refreshed) {
         headers["Authorization"] = `Bearer ${getAccessToken()}`
-        const retryResponse = await fetch(url, { ...options, headers })
+        const retryResponse = await fetch(url, { ...options, headers, credentials: "include" })
         if (!retryResponse.ok) {
           throw await this.parseError(retryResponse)
         }

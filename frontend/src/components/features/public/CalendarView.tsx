@@ -2,11 +2,18 @@
 
 import { useState, useCallback, useMemo } from "react"
 import { motion, AnimatePresence } from "framer-motion"
-import { ChevronLeft, ChevronRight, CalendarDays } from "lucide-react"
+import {
+  ChevronLeft,
+  ChevronRight,
+  CalendarDays,
+  MapPin,
+  Clock,
+} from "lucide-react"
+import Link from "next/link"
 import { Button } from "@/components/ui/Button"
 import { Badge } from "@/components/ui/Badge"
-import { EventCard } from "./EventCard"
 import type { Event } from "@/types/events"
+import { getCategoryColors, getCategoryMarker } from "@/types/categories"
 
 interface CalendarViewProps {
   events: Event[]
@@ -15,12 +22,8 @@ interface CalendarViewProps {
 const DAYS_OF_WEEK = ["Пн", "Вт", "Ср", "Чт", "Пт", "Сб", "Вс"]
 const MONTHS = [
   "Январь", "Февраль", "Март", "Апрель", "Май", "Июнь",
-  "Июль", "Август", "Сентябрь", "Октябрь", "Ноябрь", "Декабрь",
+  "Июль", "Август", "Сентябрь", "Окторябрь", "Ноябрь", "Декабрь",
 ]
-
-function getYearMonth(date: Date): string {
-  return `${date.getFullYear()}-${String(date.getMonth()).padStart(2, "0")}`
-}
 
 function getDaysInMonth(year: number, month: number): number {
   return new Date(year, month + 1, 0).getDate()
@@ -29,6 +32,11 @@ function getDaysInMonth(year: number, month: number): number {
 function getStartDayOfWeek(year: number, month: number): number {
   const day = new Date(year, month, 1).getDay()
   return day === 0 ? 6 : day - 1
+}
+
+function formatTime(timeStr: string | undefined) {
+  if (!timeStr) return null
+  return timeStr.slice(0, 5)
 }
 
 export function CalendarView({ events }: CalendarViewProps) {
@@ -46,16 +54,15 @@ export function CalendarView({ events }: CalendarViewProps) {
     eventsByDate.set(key, existing)
   }
 
-  const currentKey = `${currentYear}-${String(currentMonth + 1).padStart(2, "0")}`
   const daysInMonth = getDaysInMonth(currentYear, currentMonth)
   const startDay = getStartDayOfWeek(currentYear, currentMonth)
 
   const prevMonth = useCallback(() => {
     if (currentMonth === 0) {
-      setCurrentYear((y: number) => y - 1)
+      setCurrentYear((y) => y - 1)
       setCurrentMonth(11)
     } else {
-      setCurrentMonth((m: number) => m - 1)
+      setCurrentMonth((m) => m - 1)
     }
     setSelectedDate(null)
     setSelectedEvents([])
@@ -63,10 +70,10 @@ export function CalendarView({ events }: CalendarViewProps) {
 
   const nextMonth = useCallback(() => {
     if (currentMonth === 11) {
-      setCurrentYear((y: number) => y + 1)
+      setCurrentYear((y) => y + 1)
       setCurrentMonth(0)
     } else {
-      setCurrentMonth((m: number) => m + 1)
+      setCurrentMonth((m) => m + 1)
     }
     setSelectedDate(null)
     setSelectedEvents([])
@@ -90,48 +97,50 @@ export function CalendarView({ events }: CalendarViewProps) {
     }
   }
 
-  const isToday = (day: number) => {
-    return (
-      currentYear === today.getFullYear() &&
-      currentMonth === today.getMonth() &&
-      day === today.getDate()
-    )
-  }
+  const isToday = (day: number) =>
+    currentYear === today.getFullYear() &&
+    currentMonth === today.getMonth() &&
+    day === today.getDate()
 
   return (
     <div>
-      <div className="mb-4 flex items-center justify-between">
+      <div className="mb-5 flex items-center justify-between">
         <div className="flex items-center gap-3">
           <CalendarDays className="h-5 w-5 text-primary-600" />
-          <h2 className="text-lg font-semibold text-foreground">
+          <h2 className="text-xl font-bold text-foreground">
             {MONTHS[currentMonth]} {currentYear}
           </h2>
         </div>
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-1">
           <Button variant="ghost" size="sm" onClick={goToToday}>
             Сегодня
           </Button>
-          <Button variant="ghost" size="sm" onClick={prevMonth}>
-            <ChevronLeft className="h-4 w-4" />
-          </Button>
-          <Button variant="ghost" size="sm" onClick={nextMonth}>
-            <ChevronRight className="h-4 w-4" />
-          </Button>
+          <div className="flex gap-0.5">
+            <Button variant="ghost" size="sm" onClick={prevMonth}>
+              <ChevronLeft className="h-4 w-4" />
+            </Button>
+            <Button variant="ghost" size="sm" onClick={nextMonth}>
+              <ChevronRight className="h-4 w-4" />
+            </Button>
+          </div>
         </div>
       </div>
 
-      <div className="rounded-2xl border border-border bg-white p-4 shadow-sm">
-        <div className="mb-2 grid grid-cols-7 gap-1">
+      <div className="overflow-hidden rounded-2xl border border-border bg-white shadow-sm">
+        <div className="grid grid-cols-7 border-b border-border bg-surface-secondary">
           {DAYS_OF_WEEK.map((day) => (
-            <div key={day} className="py-1 text-center text-xs font-medium text-foreground-muted">
+            <div
+              key={day}
+              className="py-2.5 text-center text-xs font-semibold uppercase tracking-wider text-foreground-muted"
+            >
               {day}
             </div>
           ))}
         </div>
 
-        <div className="grid grid-cols-7 gap-1">
+        <div className="grid grid-cols-7">
           {Array.from({ length: startDay }).map((_, i) => (
-            <div key={`empty-${i}`} className="min-h-[80px] rounded-lg" />
+            <div key={`empty-${i}`} className="min-h-[100px] border-b border-r border-border/50 bg-surface-secondary/30" />
           ))}
 
           {Array.from({ length: daysInMonth }).map((_, i) => {
@@ -140,38 +149,43 @@ export function CalendarView({ events }: CalendarViewProps) {
             const dayEvents = eventsByDate.get(dateStr) ?? []
             const hasEvents = dayEvents.length > 0
             const isSelected = selectedDate === dateStr
+            const todayHighlight = isToday(day)
 
             return (
               <motion.button
                 key={day}
-                whileTap={{ scale: 0.95 }}
+                whileTap={{ scale: 0.97 }}
                 onClick={() => handleDayClick(day)}
-                className={`relative min-h-[80px] rounded-lg border p-1.5 text-left text-sm transition-colors ${
+                className={`relative min-h-[100px] border-b border-r border-border/50 p-2 text-left transition-all ${
                   isSelected
-                    ? "border-primary-500 bg-primary-50"
-                    : isToday(day)
-                      ? "border-primary-300 bg-primary-50/50"
-                      : "border-transparent hover:bg-surface-tertiary"
+                    ? "bg-primary-50 shadow-inner"
+                    : todayHighlight
+                      ? "bg-blue-50/70"
+                      : "hover:bg-surface-tertiary"
                 }`}
               >
                 <span
-                  className={`inline-flex h-6 w-6 items-center justify-center rounded-full text-xs font-medium ${
-                    isToday(day) ? "bg-primary-600 text-white" : "text-foreground"
+                  className={`mb-1 inline-flex h-7 w-7 items-center justify-center rounded-full text-sm font-semibold ${
+                    todayHighlight
+                      ? "bg-primary-600 text-white shadow-sm"
+                      : "text-foreground"
                   }`}
                 >
                   {day}
                 </span>
                 {hasEvents && (
-                  <div className="mt-1 flex flex-wrap gap-0.5">
+                  <div className="mt-1 space-y-1">
                     {dayEvents.slice(0, 3).map((ev) => (
                       <div
                         key={ev.id}
-                        className="h-1.5 w-1.5 rounded-full bg-primary-500"
+                        className={`h-2 rounded-full ${getCategoryMarker(ev.category.name)}`}
                         title={ev.title}
                       />
                     ))}
                     {dayEvents.length > 3 && (
-                      <span className="text-[10px] text-foreground-muted">+{dayEvents.length - 3}</span>
+                      <span className="block text-[10px] font-medium text-foreground-muted">
+                        +{dayEvents.length - 3}
+                      </span>
                     )}
                   </div>
                 )}
@@ -184,17 +198,49 @@ export function CalendarView({ events }: CalendarViewProps) {
       <AnimatePresence>
         {selectedDate && selectedEvents.length > 0 && (
           <motion.div
-            initial={{ opacity: 0, height: 0 }}
-            animate={{ opacity: 1, height: "auto" }}
-            exit={{ opacity: 0, height: 0 }}
-            className="mt-4 overflow-hidden"
+            initial={{ opacity: 0, y: -10 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -10 }}
+            className="mt-5 overflow-hidden rounded-2xl border border-border bg-white p-5 shadow-sm"
           >
-            <h3 className="mb-3 text-sm font-medium text-foreground-secondary">
-              Мероприятия на {selectedDate}
+            <h3 className="mb-4 text-sm font-semibold text-foreground">
+              Мероприятия {new Date(selectedDate + "T00:00:00").toLocaleDateString("ru-RU", {
+                day: "numeric",
+                month: "long",
+                year: "numeric",
+              })}
             </h3>
             <div className="space-y-3">
               {selectedEvents.map((ev) => (
-                <EventCard key={ev.id} event={ev} />
+                <Link
+                  key={ev.id}
+                  href={`/events/${ev.id}`}
+                  className="group flex items-start gap-4 rounded-xl border border-border p-4 transition-all hover:border-primary-200 hover:shadow-sm"
+                >
+                  <div
+                    className={`mt-1 h-3 w-3 shrink-0 rounded-full ${getCategoryMarker(ev.category.name)}`}
+                  />
+                  <div className="min-w-0 flex-1">
+                    <p className="text-sm font-semibold text-foreground group-hover:text-primary-600 transition-colors">
+                      {ev.title}
+                    </p>
+                    <div className="mt-1 flex flex-wrap gap-x-4 gap-y-1 text-xs text-foreground-muted">
+                      {formatTime(ev.start_time) && (
+                        <span className="flex items-center gap-1">
+                          <Clock className="h-3 w-3" />
+                          {formatTime(ev.start_time)}
+                        </span>
+                      )}
+                      <span className="flex items-center gap-1">
+                        <MapPin className="h-3 w-3" />
+                        {ev.location}
+                      </span>
+                    </div>
+                  </div>
+                  <Badge className={getCategoryColors(ev.category.name)}>
+                    {ev.category.name}
+                  </Badge>
+                </Link>
               ))}
             </div>
           </motion.div>

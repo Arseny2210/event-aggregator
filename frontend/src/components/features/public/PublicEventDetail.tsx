@@ -18,6 +18,8 @@ import { Skeleton } from "@/components/ui/Skeleton"
 import { ParticipateButton } from "./ParticipateButton"
 import { usePublicEvent } from "@/lib/hooks/usePublic"
 import { EVENT_STATUS_LABELS, EVENT_STATUS_COLORS } from "@/types/events"
+import { getCategoryColors, getCategoryMarker } from "@/types/categories"
+import { getImageUrl } from "@/config"
 
 interface PublicEventDetailProps {
   eventId: string
@@ -85,7 +87,7 @@ export function PublicEventDetail({ eventId }: PublicEventDetailProps) {
         {event.image_url && (
           <div className="relative h-64 w-full overflow-hidden sm:h-80">
             <Image
-              src={event.image_url}
+              src={getImageUrl(event.image_url)}
               alt={event.title}
               fill
               className="object-cover"
@@ -96,7 +98,9 @@ export function PublicEventDetail({ eventId }: PublicEventDetailProps) {
         <div className="p-6 sm:p-8">
           <div className="mb-4 flex flex-wrap items-center gap-3">
             <Badge className={statusColor}>{statusLabel}</Badge>
-            <Badge className="border border-border bg-transparent">{event.category.name}</Badge>
+            <Badge className={getCategoryColors(event.category.name)}>
+              {event.category.name}
+            </Badge>
           </div>
 
           <h1 className="mb-4 text-2xl font-bold text-foreground sm:text-3xl">
@@ -148,7 +152,7 @@ export function PublicEventDetail({ eventId }: PublicEventDetailProps) {
             {event.registration_url && (
               <a href={event.registration_url} target="_blank" rel="noopener noreferrer">
                 <Button variant="secondary">
-                  Внешняя регистрация
+                  Ссылка на регистрацию
                   <ExternalLink className="ml-1.5 h-4 w-4" />
                 </Button>
               </a>

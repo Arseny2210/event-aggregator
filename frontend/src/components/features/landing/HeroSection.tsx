@@ -1,9 +1,7 @@
 "use client"
 
-import Link from "next/link"
 import { motion } from "framer-motion"
-import { Button } from "@/components/ui/Button"
-import { GraduationCap, ArrowRight, CalendarCheck } from "lucide-react"
+import { GraduationCap } from "lucide-react"
 
 export function HeroSection() {
   return (
@@ -30,19 +28,6 @@ export function HeroSection() {
             Календарь университетских событий: конференции, хакатоны, лекции и
             культурные мероприятия в одном месте.
           </p>
-          <div className="flex flex-wrap items-center justify-center gap-3">
-            <Link href="/dashboard">
-              <Button variant="primary" size="lg" className="bg-white text-primary-900 hover:bg-blue-50">
-                Панель управления
-                <ArrowRight className="ml-2 h-4 w-4" />
-              </Button>
-            </Link>
-            <Link href="/login">
-              <Button variant="ghost" size="lg" className="text-white hover:bg-white/10">
-                Войти
-              </Button>
-            </Link>
-          </div>
         </motion.div>
       </div>
     </section>

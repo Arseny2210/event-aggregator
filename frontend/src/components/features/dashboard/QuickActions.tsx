@@ -3,7 +3,7 @@
 import Link from "next/link"
 import { motion } from "framer-motion"
 import { Card, CardHeader, CardTitle } from "@/components/ui/Card"
-import { CalendarPlus, Upload, Send } from "lucide-react"
+import { CalendarPlus, Upload } from "lucide-react"
 
 const actions = [
   {
@@ -15,17 +15,10 @@ const actions = [
   },
   {
     href: "/dashboard/imports",
-    label: "Импортировать данные",
+    label: "Импорт мероприятий",
     description: "Загрузить CSV или XLSX",
     icon: Upload,
     color: "text-green-600 bg-green-50",
-  },
-  {
-    href: "/dashboard/notifications",
-    label: "Отправить уведомление",
-    description: "Оповестить участников",
-    icon: Send,
-    color: "text-purple-600 bg-purple-50",
   },
 ]
 

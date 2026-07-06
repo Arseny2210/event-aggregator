@@ -2,7 +2,8 @@
 
 import Link from "next/link"
 import { motion } from "framer-motion"
-import { Eye, Pencil } from "lucide-react"
+import Image from "next/image"
+import { Eye, Pencil, Calendar, MapPin } from "lucide-react"
 import {
   Table,
   TableBody,
@@ -21,6 +22,8 @@ import { useEvents } from "@/lib/hooks/useEvents"
 import { EmptyState } from "@/components/layout/EmptyState"
 import type { EventSearchParams } from "@/types/events"
 import { EVENT_STATUS_COLORS, EVENT_STATUS_LABELS } from "@/types/events"
+import { getCategoryColors } from "@/types/categories"
+import { getImageUrl } from "@/config"
 
 interface EventListProps {
   params: EventSearchParams
@@ -69,6 +72,7 @@ export function EventList({ params, onPageChange }: EventListProps) {
             <TableHeader>Название</TableHeader>
             <TableHeader>Дата</TableHeader>
             <TableHeader>Место</TableHeader>
+            <TableHeader>Категория</TableHeader>
             <TableHeader>Статус</TableHeader>
             <TableHeader className="w-24">Действия</TableHeader>
           </TableRow>
@@ -76,12 +80,49 @@ export function EventList({ params, onPageChange }: EventListProps) {
         <TableBody>
           {data.items.map((event) => (
             <TableRow key={event.id}>
-              <TableCell className="font-medium">{event.title}</TableCell>
               <TableCell>
-                {new Date(event.start_date).toLocaleDateString("ru-RU")}
-                {event.start_time ? ` ${event.start_time}` : ""}
+                <div className="flex items-center gap-3">
+                  {event.image_url ? (
+                    <Image
+                      src={getImageUrl(event.image_url)}
+                      alt=""
+                      width={40}
+                      height={40}
+                      className="h-10 w-10 rounded-lg object-cover"
+                    />
+                  ) : (
+                    <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary-50 text-primary-600 text-xs font-bold">
+                      {event.title.charAt(0)}
+                    </div>
+                  )}
+                  <div>
+                    <p className="font-medium text-foreground">{event.title}</p>
+                    {event.target_audience && (
+                      <p className="text-xs text-foreground-muted">{event.target_audience}</p>
+                    )}
+                  </div>
+                </div>
               </TableCell>
-              <TableCell>{event.location}</TableCell>
+              <TableCell>
+                <span className="flex items-center gap-1 text-sm">
+                  <Calendar className="h-3.5 w-3.5 text-foreground-muted" />
+                  {new Date(event.start_date).toLocaleDateString("ru-RU")}
+                  {event.start_time ? ` ${event.start_time}` : ""}
+                </span>
+              </TableCell>
+              <TableCell>
+                <span className="flex items-center gap-1 text-sm">
+                  <MapPin className="h-3.5 w-3.5 text-foreground-muted" />
+                  {event.location}
+                </span>
+              </TableCell>
+              <TableCell>
+                {event.category && (
+                  <Badge className={getCategoryColors(event.category.name)}>
+                    {event.category.name}
+                  </Badge>
+                )}
+              </TableCell>
               <TableCell>
                 <Badge className={EVENT_STATUS_COLORS[event.status]}>
                   {EVENT_STATUS_LABELS[event.status]}
