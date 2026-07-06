@@ -19,7 +19,7 @@ COPY --from=builder /usr/local/bin /usr/local/bin
 COPY app/ app/
 COPY alembic.ini .
 COPY app/database/migrations/ app/database/migrations/
-COPY docker/entrypoint.sh /entrypoint.sh
+COPY entrypoint.sh /entrypoint.sh
 RUN chmod +x /entrypoint.sh
 
 RUN mkdir -p /app/uploads && chown -R appuser:appgroup /app
