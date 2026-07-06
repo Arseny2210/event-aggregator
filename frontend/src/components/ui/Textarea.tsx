@@ -6,10 +6,11 @@ import { cn } from "@/utils/cn"
 interface TextareaProps extends React.TextareaHTMLAttributes<HTMLTextAreaElement> {
   label?: string
   error?: string
+  helperText?: string
 }
 
 export const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(
-  ({ className, label, error, id, ...props }, ref) => {
+  ({ className, label, error, helperText, id, ...props }, ref) => {
     const textareaId = id || label?.toLowerCase().replace(/\s+/g, "-")
 
     return (
@@ -32,6 +33,9 @@ export const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(
           )}
           {...props}
         />
+        {helperText && !error && (
+          <p className="mt-1.5 text-xs text-foreground-muted">{helperText}</p>
+        )}
         {error && <p className="mt-1.5 text-xs text-red-600">{error}</p>}
       </div>
     )

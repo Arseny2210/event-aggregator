@@ -14,8 +14,8 @@ from app.services.exceptions import (
     CannotRegisterForArchivedEventError,
     DuplicateParticipationError,
     EventNotFoundError,
-    ParticipationNotFoundError,
     ParticipationNotEnabledError,
+    ParticipationNotFoundError,
     RegistrationClosedError,
 )
 from app.services.transaction import transactional

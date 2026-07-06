@@ -1,4 +1,5 @@
 from fastapi import FastAPI
+from fastapi.staticfiles import StaticFiles
 
 from app.api.router import api_router
 from app.core.config import settings
@@ -40,6 +41,7 @@ def create_app() -> FastAPI:
 
     app.include_router(health_router)
     app.include_router(api_router)
+    app.mount("/uploads", StaticFiles(directory=settings.upload_dir), name="uploads")
 
     return app
 

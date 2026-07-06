@@ -1,7 +1,7 @@
 "use client"
 
 import Link from "next/link"
-import { Pencil, ArrowLeft } from "lucide-react"
+import { Pencil, ArrowLeft, Users, GraduationCap, ToggleLeft, ToggleRight } from "lucide-react"
 import { Card, CardHeader, CardTitle } from "@/components/ui/Card"
 import { Badge } from "@/components/ui/Badge"
 import { Button } from "@/components/ui/Button"
@@ -71,11 +71,16 @@ export function EventDetail({ eventId }: EventDetailProps) {
           <div className="flex items-start justify-between">
             <div>
               <CardTitle className="text-xl">{event.title}</CardTitle>
-              <Badge
-                className={`mt-2 ${EVENT_STATUS_COLORS[event.status]}`}
-              >
-                {EVENT_STATUS_LABELS[event.status]}
-              </Badge>
+              <div className="mt-2 flex flex-wrap gap-2">
+                <Badge className={EVENT_STATUS_COLORS[event.status]}>
+                  {EVENT_STATUS_LABELS[event.status]}
+                </Badge>
+                {event.category && (
+                  <Badge className="border border-border bg-transparent">
+                    {event.category.name}
+                  </Badge>
+                )}
+              </div>
             </div>
           </div>
         </CardHeader>
@@ -120,8 +125,46 @@ export function EventDetail({ eventId }: EventDetailProps) {
               <dt className="font-medium text-foreground-secondary">
                 Категория
               </dt>
-              <dd className="font-mono text-xs text-foreground">
-                {event.category_id}
+              <dd className="text-foreground">
+                {event.category?.name ?? event.category_id}
+              </dd>
+            </div>
+            {event.target_audience && (
+              <div>
+                <dt className="font-medium text-foreground-secondary">
+                  Целевая аудитория
+                </dt>
+                <dd className="flex items-center gap-1.5 text-foreground">
+                  <GraduationCap className="h-3.5 w-3.5 text-foreground-muted" />
+                  {event.target_audience}
+                </dd>
+              </div>
+            )}
+            <div>
+              <dt className="font-medium text-foreground-secondary">
+                Участники
+              </dt>
+              <dd className="flex items-center gap-1.5 text-foreground">
+                <Users className="h-3.5 w-3.5 text-foreground-muted" />
+                {event.participants_count ?? 0}
+              </dd>
+            </div>
+            <div>
+              <dt className="font-medium text-foreground-secondary">
+                Регистрация
+              </dt>
+              <dd className="flex items-center gap-1.5 text-foreground">
+                {event.participation_enabled ? (
+                  <>
+                    <ToggleRight className="h-4 w-4 text-green-600" />
+                    <span className="text-green-700">Включена</span>
+                  </>
+                ) : (
+                  <>
+                    <ToggleLeft className="h-4 w-4 text-foreground-muted" />
+                    <span className="text-foreground-muted">Отключена</span>
+                  </>
+                )}
               </dd>
             </div>
           </dl>

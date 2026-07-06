@@ -29,6 +29,8 @@ export function useCreateEvent() {
     mutationFn: (data: CreateEventDto) => eventsApi.create(data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["events"] })
+      queryClient.invalidateQueries({ queryKey: ["public-events"] })
+      queryClient.invalidateQueries({ queryKey: ["categories"] })
     },
   })
 }
@@ -41,6 +43,9 @@ export function useUpdateEvent() {
     onSuccess: (_, { id }) => {
       queryClient.invalidateQueries({ queryKey: ["events"] })
       queryClient.invalidateQueries({ queryKey: ["events", id] })
+      queryClient.invalidateQueries({ queryKey: ["public-events"] })
+      queryClient.invalidateQueries({ queryKey: ["public-event", id] })
+      queryClient.invalidateQueries({ queryKey: ["categories"] })
     },
   })
 }
@@ -51,6 +56,8 @@ export function useDeleteEvent() {
     mutationFn: (id: string) => eventsApi.delete(id),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["events"] })
+      queryClient.invalidateQueries({ queryKey: ["public-events"] })
+      queryClient.invalidateQueries({ queryKey: ["categories"] })
     },
   })
 }

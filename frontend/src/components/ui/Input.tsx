@@ -6,10 +6,11 @@ import { cn } from "@/utils/cn"
 interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {
   label?: string
   error?: string
+  helperText?: string
 }
 
 export const Input = forwardRef<HTMLInputElement, InputProps>(
-  ({ className, label, error, id, ...props }, ref) => {
+  ({ className, label, error, helperText, id, ...props }, ref) => {
     const inputId = id || label?.toLowerCase().replace(/\s+/g, "-")
 
     return (
@@ -31,6 +32,9 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
           )}
           {...props}
         />
+        {helperText && !error && (
+          <p className="mt-1.5 text-xs text-foreground-muted">{helperText}</p>
+        )}
         {error && <p className="mt-1.5 text-xs text-red-600">{error}</p>}
       </div>
     )

@@ -6,25 +6,31 @@ import { motion, AnimatePresence } from "framer-motion"
 import { cn } from "@/utils/cn"
 import { useUIStore } from "@/lib/store/ui"
 import {
-  Bell,
   GraduationCap,
   Home,
   LayoutDashboard,
   Menu,
+  Settings,
   Upload,
   X,
 } from "lucide-react"
 
-const navItems = [
+const mainNav = [
   { href: "/dashboard", label: "Главная", icon: Home },
   { href: "/dashboard/events", label: "Мероприятия", icon: LayoutDashboard },
-  { href: "/dashboard/imports", label: "Импорт", icon: Upload },
-  { href: "/dashboard/notifications", label: "Уведомления", icon: Bell },
+]
+
+const adminNav = [
+  { href: "/dashboard/imports", label: "Импорт мероприятий", icon: Upload },
 ]
 
 export function Sidebar() {
   const pathname = usePathname()
   const { sidebarOpen, toggleSidebar, closeSidebar } = useUIStore()
+
+  const isActive = (href: string) =>
+    pathname === href ||
+    (href !== "/dashboard" && pathname.startsWith(href))
 
   return (
     <>
@@ -70,10 +76,7 @@ export function Sidebar() {
         </div>
 
         <nav className="mt-4 space-y-1 px-3">
-          {navItems.map((item) => {
-            const isActive =
-              pathname === item.href ||
-              (item.href !== "/dashboard" && pathname.startsWith(item.href))
+          {mainNav.map((item) => {
             const Icon = item.icon
             return (
               <Link
@@ -82,7 +85,7 @@ export function Sidebar() {
                 onClick={closeSidebar}
                 className={cn(
                   "flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium transition-all",
-                  isActive
+                  isActive(item.href)
                     ? "bg-primary-50 text-primary-700"
                     : "text-foreground-secondary hover:bg-surface-tertiary hover:text-foreground",
                 )}
@@ -93,6 +96,36 @@ export function Sidebar() {
             )
           })}
         </nav>
+
+        <div className="mt-6 px-3">
+          <div className="mb-2 flex items-center gap-2 px-3">
+            <Settings className="h-3.5 w-3.5 text-foreground-muted" />
+            <span className="text-[11px] font-semibold uppercase tracking-wider text-foreground-muted">
+              Администрирование
+            </span>
+          </div>
+          <nav className="space-y-1">
+            {adminNav.map((item) => {
+              const Icon = item.icon
+              return (
+                <Link
+                  key={item.href}
+                  href={item.href}
+                  onClick={closeSidebar}
+                  className={cn(
+                    "flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium transition-all",
+                    isActive(item.href)
+                      ? "bg-primary-50 text-primary-700"
+                      : "text-foreground-secondary hover:bg-surface-tertiary hover:text-foreground",
+                  )}
+                >
+                  <Icon className="h-4 w-4" />
+                  {item.label}
+                </Link>
+              )
+            })}
+          </nav>
+        </div>
       </aside>
     </>
   )

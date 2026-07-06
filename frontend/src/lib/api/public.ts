@@ -5,6 +5,8 @@ import type { Event } from "@/types/events"
 export const publicApi = {
   categories: {
     list: () => apiClient.get<Category[]>("/categories"),
+    create: (data: { name: string; description?: string | null }) =>
+      apiClient.post<Category>("/categories/", data),
   },
 
   events: {

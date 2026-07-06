@@ -12,6 +12,7 @@ from app.models.event import Event
 from app.repositories.event import EventRepository
 from app.repositories.organizer import OrganizerRepository
 from app.repositories.participation import ParticipationRepository
+from app.schemas.category import CategoryResponse
 from app.schemas.event import EventCreate, EventResponse, EventUpdate
 from app.schemas.event_search import EventSearchFilters
 from app.schemas.page import Page
@@ -72,8 +73,29 @@ class EventService:
         if self.participation_repository is not None:
             participants_count = await self.participation_repository.count_by_event(event.id)
         return EventResponse(
-            **event.__dict__,
+            id=event.id,
+            title=event.title,
+            short_description=event.short_description,
+            description=event.description,
+            start_date=event.start_date,
+            start_time=event.start_time,
+            end_time=event.end_time,
+            location=event.location,
+            image_url=event.image_url,
+            registration_url=event.registration_url,
+            status=event.status,
+            target_audience=event.target_audience,
+            participation_enabled=event.participation_enabled,
+            organizer_id=event.organizer_id,
+            category_id=event.category_id,
+            category=CategoryResponse(
+                id=event.category.id,
+                name=event.category.name,
+                description=event.category.description,
+            ),
             participants_count=participants_count,
+            created_at=event.created_at,
+            updated_at=event.updated_at,
         )
 
     async def get_event(self, event_id: UUID) -> Event:

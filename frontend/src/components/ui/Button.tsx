@@ -11,6 +11,8 @@ const variants = {
     "bg-white text-foreground border border-border hover:bg-surface-tertiary shadow-sm",
   ghost: "bg-transparent text-foreground-secondary hover:bg-surface-tertiary",
   danger: "bg-red-600 text-white hover:bg-red-700 shadow-sm shadow-red-200",
+  success:
+    "bg-emerald-600 text-white shadow-sm shadow-emerald-200 cursor-default",
 } as const
 
 const sizes = {
