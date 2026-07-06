@@ -1,6 +1,6 @@
 "use client"
 
-import { forwardRef } from "react"
+import { forwardRef, useRef } from "react"
 import { cn } from "@/utils/cn"
 
 interface SelectProps extends React.SelectHTMLAttributes<HTMLSelectElement> {
@@ -11,8 +11,21 @@ interface SelectProps extends React.SelectHTMLAttributes<HTMLSelectElement> {
 }
 
 export const Select = forwardRef<HTMLSelectElement, SelectProps>(
-  ({ className, label, error, helperText, id, options, ...props }, ref) => {
+  ({ className, label, error, helperText, id, options, onFocus, onBlur, ...props }, ref) => {
     const selectId = id || label?.toLowerCase().replace(/\s+/g, "-")
+    const scrollY = useRef(0)
+
+    const handleFocus = (e: React.FocusEvent<HTMLSelectElement>) => {
+      scrollY.current = window.scrollY
+      onFocus?.(e)
+    }
+
+    const handleBlur = (e: React.FocusEvent<HTMLSelectElement>) => {
+      requestAnimationFrame(() => {
+        window.scrollTo({ top: scrollY.current })
+      })
+      onBlur?.(e)
+    }
 
     return (
       <div className="w-full">
@@ -24,6 +37,8 @@ export const Select = forwardRef<HTMLSelectElement, SelectProps>(
         <select
           ref={ref}
           id={selectId}
+          onFocus={handleFocus}
+          onBlur={handleBlur}
           className={cn(
             "w-full rounded-xl border border-border bg-white px-3.5 py-2.5 text-sm text-foreground transition-all",
             "focus:border-primary-500 focus:outline-none focus:ring-2 focus:ring-primary-500/20",

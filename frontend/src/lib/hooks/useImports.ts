@@ -16,6 +16,8 @@ export function useImport(id: string | undefined) {
     queryKey: ["imports", id],
     queryFn: () => importsApi.getById(id!),
     enabled: !!id,
+    refetchInterval: (query) =>
+      query.state.data?.status === "processing" ? 2000 : false,
   })
 }
 

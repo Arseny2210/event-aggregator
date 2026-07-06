@@ -5,6 +5,7 @@ from typing import Annotated
 from uuid import UUID
 
 from fastapi import APIRouter, Depends, HTTPException, Query, Response
+from pydantic import BaseModel, Field
 
 from app.api.v1.dependencies import get_event_service
 from app.core.constants import PERMISSION_EVENT_MANAGE
@@ -17,6 +18,11 @@ from app.schemas.page import Page
 from app.services.event import EventService
 
 router = APIRouter()
+
+
+class BatchStatusUpdate(BaseModel):
+    event_ids: list[UUID] = Field(min_length=1, max_length=100)
+    status: EventStatus
 
 
 @router.get("/", response_model=Page[EventResponse])
@@ -86,3 +92,20 @@ async def delete_event(
 ):
     await event_service.delete_event(event_id)
     return Response(status_code=204)
+
+
+@router.post("/batch-status", response_model=dict)
+async def batch_update_status(
+    data: BatchStatusUpdate,
+    current_user: Annotated[User, Depends(require_permission(PERMISSION_EVENT_MANAGE))],
+    event_service: Annotated[EventService, Depends(get_event_service)],
+):
+    success = 0
+    errors = []
+    for eid in data.event_ids:
+        try:
+            await event_service.update_event(eid, EventUpdate(status=data.status))
+            success += 1
+        except Exception as exc:
+            errors.append({"event_id": str(eid), "error": str(exc)})
+    return {"success": success, "errors": errors}

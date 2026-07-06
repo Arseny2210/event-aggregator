@@ -17,13 +17,13 @@ interface TabsProps {
 
 export function Tabs({ tabs, activeTab, onTabChange, className }: TabsProps) {
   return (
-    <div className={cn("flex gap-1 rounded-xl bg-surface-tertiary p-1", className)}>
+    <div className={cn("inline-flex w-full gap-1 rounded-xl bg-surface-tertiary p-1 sm:w-auto", className)}>
       {tabs.map((tab) => (
         <button
           key={tab.id}
           onClick={() => onTabChange(tab.id)}
           className={cn(
-            "relative rounded-lg px-4 py-2 text-sm font-medium transition-colors",
+            "relative flex-1 rounded-lg px-4 py-2 text-sm font-medium transition-colors sm:flex-none",
             activeTab === tab.id
               ? "text-foreground"
               : "text-foreground-muted hover:text-foreground-secondary",

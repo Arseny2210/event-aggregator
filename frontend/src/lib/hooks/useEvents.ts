@@ -61,3 +61,15 @@ export function useDeleteEvent() {
     },
   })
 }
+
+export function useBatchEventStatus() {
+  const queryClient = useQueryClient()
+  return useMutation({
+    mutationFn: (data: { eventIds: string[]; status: string }) =>
+      eventsApi.batchStatus(data.eventIds, data.status),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["events"] })
+      queryClient.invalidateQueries({ queryKey: ["public-events"] })
+    },
+  })
+}
