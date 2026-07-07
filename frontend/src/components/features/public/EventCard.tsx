@@ -69,10 +69,12 @@ export function EventCard({ event }: EventCardProps) {
             <MapPin className="h-3.5 w-3.5" />
             {event.location}
           </span>
-          <span className="flex items-center gap-1.5">
-            <Users className="h-3.5 w-3.5" />
-            {event.participants_count}
-          </span>
+          {event.participation_enabled && (
+            <span className="flex items-center gap-1.5 rounded-full bg-primary-50 px-2.5 py-0.5 text-sm font-semibold text-primary-700">
+              <Users className="h-3.5 w-3.5" />
+              {event.participants_count}
+            </span>
+          )}
         </div>
 
         {event.target_audience && (

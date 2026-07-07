@@ -17,7 +17,7 @@ export function DashboardHeader() {
               {user.email}
             </p>
             <p className="text-xs text-foreground-muted">
-              {(user as { role?: { name: string } }).role?.name === "admin" ? "Администратор" : "Пользователь"}
+              {(user as { role?: { name: string } }).role?.name === "administrator" ? "Администратор" : "Редактор"}
             </p>
           </div>
           <Avatar name={user.email} size="md" />

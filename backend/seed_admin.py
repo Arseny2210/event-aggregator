@@ -19,15 +19,29 @@ PERMISSIONS = [
     "notification:view",
     "notification:manage",
     "statistics:view",
+    "user:view",
+    "role:view",
+    "permission:view",
+    "organizer:manage",
+    "organizer:delete",
 ]
 
 
 async def seed() -> None:
     async with async_session_factory() as session, session.begin():
-        result = await session.execute(select(Role).where(Role.name == "admin"))
-        role = result.scalar_one_or_none()
-        if not role:
-            role = Role(name="admin")
+        result = await session.execute(
+            select(Role).where(Role.name.in_(["administrator", "admin"]))
+        )
+        roles = result.scalars().all()
+        if roles:
+            role = roles[0]
+            for dup in roles[1:]:
+                session.delete(dup)
+            if role.name == "admin":
+                role.name = "administrator"
+                await session.flush()
+        else:
+            role = Role(name="administrator")
             session.add(role)
             await session.flush()
 

@@ -23,14 +23,18 @@ class TokenResponse(BaseSchema):
     token_type: str = "bearer"
 
 
+class RoleInfo(BaseSchema):
+    id: int
+    name: str
+
+
 class UserMeResponse(BaseSchema):
     id: uuid.UUID
     username: str
     email: EmailStr
-    role_id: int
+    role: RoleInfo
     is_active: bool
     last_login: datetime | None = Field(default=None)
     created_at: datetime
     updated_at: datetime
-    role_name: str
     permissions: list[str] = Field(default_factory=list)

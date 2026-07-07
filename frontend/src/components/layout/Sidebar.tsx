@@ -12,6 +12,7 @@ import {
   Menu,
   Settings,
   Upload,
+  Users,
   X,
 } from "lucide-react"
 
@@ -22,6 +23,7 @@ const mainNav = [
 
 const adminNav = [
   { href: "/dashboard/imports", label: "Импорт мероприятий", icon: Upload },
+  { href: "/dashboard/users", label: "Пользователи", icon: Users },
 ]
 
 export function Sidebar() {

@@ -11,6 +11,7 @@ from app.api.v1.endpoints.notifications import router as notifications_router
 from app.api.v1.endpoints.organizers import router as organizers_router
 from app.api.v1.endpoints.participation import router as participation_router
 from app.api.v1.endpoints.uploads import router as uploads_router
+from app.api.v1.endpoints.users import router as users_router
 
 router = APIRouter()
 
@@ -23,3 +24,4 @@ router.include_router(notifications_router, prefix="/notifications", tags=["noti
 router.include_router(organizers_router, prefix="/organizers", tags=["organizers"])
 router.include_router(participation_router, prefix="/events", tags=["participation"])
 router.include_router(uploads_router, prefix="/upload", tags=["uploads"])
+router.include_router(users_router, prefix="/users", tags=["users"])

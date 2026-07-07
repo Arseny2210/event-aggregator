@@ -123,10 +123,12 @@ export function PublicEventDetail({ eventId }: PublicEventDetailProps) {
               <MapPin className="h-4 w-4 text-primary-500" />
               {event.location}
             </span>
-            <span className="flex items-center gap-2">
-              <Users className="h-4 w-4 text-primary-500" />
-              {event.participants_count} участников
-            </span>
+            {event.participation_enabled && (
+              <span className="flex items-center gap-2 rounded-full bg-primary-50 px-3 py-1 text-sm font-semibold text-primary-700">
+                <Users className="h-4 w-4" />
+                {event.participants_count} участников
+              </span>
+            )}
             {event.target_audience && (
               <span className="flex items-center gap-2">
                 <GraduationCap className="h-4 w-4 text-primary-500" />

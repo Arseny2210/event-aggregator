@@ -61,11 +61,14 @@ export function EventForm({ event, isEditing }: EventFormProps) {
   const fileInputRef = useRef<HTMLInputElement>(null)
 
   const organizers = organizersData?.items ?? []
-  const isAdmin = user?.role?.name === "admin"
+  const isAdmin = user?.role?.name === "administrator"
 
   const categoryOptions = useMemo(() => {
-    const fromApi = categories.map((c) => ({ value: c.id, label: c.name }))
+    const fromApi = categories
+      .filter((c) => c.name !== "Другая")
+      .map((c) => ({ value: c.id, label: c.name }))
     return [
+      { value: "", label: "Выберите категорию" },
       ...fromApi,
       { value: "__custom__", label: "Другая (указать вручную)" },
     ]

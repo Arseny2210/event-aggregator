@@ -15,7 +15,7 @@ from app.core.security import (
 )
 from app.models.user import User
 from app.repositories.user import UserRepository
-from app.schemas.auth import UserMeResponse
+from app.schemas.auth import RoleInfo, UserMeResponse
 from app.services.exceptions import (
     InvalidCredentialsError,
     InvalidTokenError,
@@ -114,11 +114,10 @@ class AuthService:
             id=user.id,
             username=user.username,
             email=user.email,
-            role_id=user.role_id,
+            role=RoleInfo(id=user.role.id, name=user.role.name),
             is_active=user.is_active,
             last_login=user.last_login,
             created_at=user.created_at,
             updated_at=user.updated_at,
-            role_name=user.role.name,
             permissions=permissions,
         )
