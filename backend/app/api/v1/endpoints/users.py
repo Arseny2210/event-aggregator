@@ -40,7 +40,6 @@ async def list_users(
     offset: Annotated[int, Field(ge=0)] = 0,
     limit: Annotated[int, Field(ge=1, le=100)] = 20,
 ):
-    count_stmt = select(User).order_by(User.username)
     count_result = await session.execute(select(User).order_by(User.username))
     all_users = list(count_result.scalars().all())
     total = len(all_users)
