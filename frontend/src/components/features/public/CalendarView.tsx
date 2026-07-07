@@ -140,7 +140,7 @@ export function CalendarView({ events }: CalendarViewProps) {
 
         <div className="grid grid-cols-7">
           {Array.from({ length: startDay }).map((_, i) => (
-            <div key={`empty-${i}`} className="min-h-[100px] border-b border-r border-border/50 bg-surface-secondary/30" />
+            <div key={`empty-${i}`} className="min-h-[60px] border-b border-r border-border/50 bg-surface-secondary/30 sm:min-h-[100px]" />
           ))}
 
           {Array.from({ length: daysInMonth }).map((_, i) => {
@@ -148,6 +148,7 @@ export function CalendarView({ events }: CalendarViewProps) {
             const dateStr = `${currentYear}-${String(currentMonth + 1).padStart(2, "0")}-${String(day).padStart(2, "0")}`
             const dayEvents = eventsByDate.get(dateStr) ?? []
             const hasEvents = dayEvents.length > 0
+            const isOverloaded = dayEvents.length >= 3
             const isSelected = selectedDate === dateStr
             const todayHighlight = isToday(day)
 
@@ -156,16 +157,22 @@ export function CalendarView({ events }: CalendarViewProps) {
                 key={day}
                 whileTap={{ scale: 0.97 }}
                 onClick={() => handleDayClick(day)}
-                className={`relative min-h-[100px] border-b border-r border-border/50 p-2 text-left transition-all ${
+                className={`relative min-h-[60px] border-b border-r border-border/50 p-1.5 text-left transition-all sm:min-h-[100px] sm:p-2 ${
+                  isOverloaded && !isSelected
+                    ? "bg-red-50/70 ring-2 ring-red-300 z-10"
+                    : ""
+                } ${
                   isSelected
                     ? "bg-primary-50 shadow-inner"
                     : todayHighlight
                       ? "bg-blue-50/70"
-                      : "hover:bg-surface-tertiary"
+                      : !isOverloaded
+                        ? "hover:bg-surface-tertiary"
+                        : ""
                 }`}
               >
                 <span
-                  className={`mb-1 inline-flex h-7 w-7 items-center justify-center rounded-full text-sm font-semibold ${
+                  className={`mb-0.5 inline-flex h-6 w-6 items-center justify-center rounded-full text-xs font-semibold sm:mb-1 sm:h-7 sm:w-7 sm:text-sm ${
                     todayHighlight
                       ? "bg-primary-600 text-white shadow-sm"
                       : "text-foreground"
@@ -174,11 +181,11 @@ export function CalendarView({ events }: CalendarViewProps) {
                   {day}
                 </span>
                 {hasEvents && (
-                  <div className="mt-1 space-y-1">
+                  <div className="mt-0.5 space-y-0.5 sm:mt-1 sm:space-y-1">
                     {dayEvents.slice(0, 3).map((ev) => (
                       <div
                         key={ev.id}
-                        className={`h-2 rounded-full ${getCategoryMarker(ev.category.name)}`}
+                        className={`h-1.5 rounded-full sm:h-2 ${getCategoryMarker(ev.category.name)}`}
                         title={ev.title}
                       />
                     ))}

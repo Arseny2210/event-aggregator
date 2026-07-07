@@ -34,4 +34,10 @@ export const eventsApi = {
 
   delete: (id: string) =>
     apiClient.delete<void>(`/events/${id}`),
+
+  batchStatus: (eventIds: string[], status: string) =>
+    apiClient.post<{ success: number; errors: Array<{ event_id: string; error: string }> }>(
+      "/events/batch-status",
+      { event_ids: eventIds, status },
+    ),
 }

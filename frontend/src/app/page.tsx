@@ -78,7 +78,7 @@ export default function HomePage() {
   }, [eventsData, categoryFilter, knownCategoryIds])
 
   const totalEvents = eventsData?.total ?? 0
-  const hasMore = events.length < totalEvents
+  const hasMore = !categoryFilter && events.length < totalEvents
 
   const handleLoadMore = useCallback(() => {
     if (hasMore && !isFetching) {
@@ -101,23 +101,22 @@ export default function HomePage() {
             >
               <Tabs tabs={VIEW_TABS} activeTab={view} onTabChange={setView} />
 
-              <div className="flex gap-3 sm:items-center">
-                <div className="relative flex-1 sm:flex-initial">
+              <div className="flex flex-col-reverse gap-3 sm:flex-row sm:items-center">
+                <div className="relative w-full sm:w-64">
                   <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-foreground-muted" />
                   <Input
                     placeholder="Поиск мероприятий..."
                     value={searchInput}
                     onChange={(e) => setSearchInput(e.target.value)}
-                    className="pl-9 w-full sm:w-64"
+                    className="pl-9 w-full"
                   />
                 </div>
-                <div className="w-full sm:w-48">
-                  <Select
-                    options={categoryOptions}
-                    value={categoryFilter}
-                    onChange={(e) => setCategoryFilter(e.target.value)}
-                  />
-                </div>
+                <Select
+                  options={categoryOptions}
+                  value={categoryFilter}
+                  onChange={(e) => setCategoryFilter(e.target.value)}
+                  className="w-full sm:w-48"
+                />
               </div>
             </motion.div>
 

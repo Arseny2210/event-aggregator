@@ -1,10 +1,9 @@
 """Async test factories using the AsyncSession directly."""
 
-from uuid import uuid4
-
 from faker import Faker
 
 from app.core.security import hash_password
+from app.models.category import Category
 from app.models.enums import (
     EventStatus,
     ImportRowStatus,
@@ -102,19 +101,34 @@ class OrganizerFactory:
         return obj
 
 
+class CategoryFactory:
+    @classmethod
+    async def create(cls, session, **kwargs) -> Category:
+        defaults = {
+            "name": kwargs.pop("name", f"category_{faker.unique.word()}"),
+        }
+        defaults.update(kwargs)
+        obj = Category(**defaults)
+        session.add(obj)
+        await session.flush()
+        return obj
+
+
 class EventFactory:
     @classmethod
     async def create(cls, session, **kwargs) -> Event:
         if "organizer" not in kwargs and "organizer_id" not in kwargs:
             org = await OrganizerFactory.create(session)
             kwargs["organizer"] = org
+        if "category" not in kwargs and "category_id" not in kwargs:
+            cat = await CategoryFactory.create(session)
+            kwargs["category"] = cat
         from datetime import date
 
         defaults = {
             "title": kwargs.pop("title", faker.sentence(nb_words=4)),
             "description": kwargs.pop("description", faker.paragraph()),
             "status": kwargs.pop("status", EventStatus.draft),
-            "category_id": kwargs.pop("category_id", uuid4()),
             "start_date": kwargs.pop("start_date", date.today()),
             "location": kwargs.pop("location", faker.city()),
         }

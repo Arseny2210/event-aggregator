@@ -120,20 +120,22 @@ class EventRepository(BaseRepository[Event]):
 
     async def search_by_title(self, query: str, offset: int, limit: int) -> tuple[list[Event], int]:
         escaped = self._escape_like(query)
+        like_pattern = f"%{escaped}%"
+
+        where_clause = (
+            Event.title.ilike(like_pattern)
+            | Event.description.ilike(like_pattern)
+            | Event.short_description.ilike(like_pattern)
+            | Event.location.ilike(like_pattern)
+        )
 
         statement = (
-            select(Event)
-            .where(Event.title.ilike(f"%{escaped}%"))
-            .order_by(Event.title)
-            .offset(offset)
-            .limit(limit)
+            select(Event).where(where_clause).order_by(Event.title).offset(offset).limit(limit)
         )
         result = await self.session.execute(statement)
         items = list(result.scalars().all())
 
-        count_statement = (
-            select(func.count()).select_from(Event).where(Event.title.ilike(f"%{escaped}%"))
-        )
+        count_statement = select(func.count()).select_from(Event).where(where_clause)
         count_result = await self.session.execute(count_statement)
         total = count_result.scalar_one()
 
@@ -146,7 +148,14 @@ class EventRepository(BaseRepository[Event]):
         conditions: list[ColumnElement[bool]] = []
 
         if filters.search:
-            conditions.append(Event.title.ilike(f"%{self._escape_like(filters.search)}%"))
+            escaped = self._escape_like(filters.search)
+            like_pattern = f"%{escaped}%"
+            conditions.append(
+                Event.title.ilike(like_pattern)
+                | Event.description.ilike(like_pattern)
+                | Event.short_description.ilike(like_pattern)
+                | Event.location.ilike(like_pattern)
+            )
         if filters.status is not None:
             conditions.append(Event.status == filters.status)
         if filters.organizer_id is not None:

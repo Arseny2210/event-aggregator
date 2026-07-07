@@ -21,7 +21,7 @@ interface ImportDetailProps {
 export function ImportDetail({ importId }: ImportDetailProps) {
   const { user } = useAuth()
   const { data: job, isLoading, error } = useImport(importId)
-  const isAdmin = user?.role?.name === "admin"
+  const isAdmin = user?.role?.name === "administrator"
 
   if (isLoading) {
     return (

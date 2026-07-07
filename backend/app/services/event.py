@@ -28,8 +28,12 @@ from app.services.transaction import transactional
 
 _ALLOWED_TRANSITIONS: dict[EventStatus, frozenset[EventStatus]] = {
     EventStatus.draft: frozenset({EventStatus.published, EventStatus.draft}),
-    EventStatus.published: frozenset({EventStatus.completed, EventStatus.published}),
-    EventStatus.completed: frozenset({EventStatus.archived, EventStatus.completed}),
+    EventStatus.published: frozenset(
+        {EventStatus.completed, EventStatus.draft, EventStatus.published}
+    ),
+    EventStatus.completed: frozenset(
+        {EventStatus.archived, EventStatus.draft, EventStatus.published, EventStatus.completed}
+    ),
     EventStatus.archived: frozenset({EventStatus.archived}),
 }
 
