@@ -11,7 +11,7 @@ from app.schemas.event import EventCreate
 from app.schemas.event_search import EventSearchFilters
 from app.services.event import EventService
 from app.services.exceptions import EventNotFoundError, OrganizerNotFoundError
-from tests.factories import EventFactory, OrganizerFactory
+from tests.factories import CategoryFactory, EventFactory, OrganizerFactory
 
 
 class TestEventService:
@@ -41,6 +41,7 @@ class TestEventService:
     @pytest.mark.asyncio
     async def test_create_event(self, db_session):
         org = await OrganizerFactory.create(db_session)
+        cat = await CategoryFactory.create(db_session)
         svc = EventService(
             session=db_session,
             repository=EventRepository(db_session),
@@ -52,7 +53,7 @@ class TestEventService:
             start_date="2026-06-01",
             location="Test Location",
             organizer_id=org.id,
-            category_id=uuid4(),
+            category_id=cat.id,
         )
         event = await svc.create_event(data)
         assert event.title == "New Event"
