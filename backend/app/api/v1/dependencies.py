@@ -95,7 +95,15 @@ async def get_participation_service(
 ) -> ParticipationService:
     participation_repo = ParticipationRepository(session)
     event_repo = EventRepository(session)
-    return ParticipationService(session, participation_repo, event_repo)
+    notification_repo = NotificationRepository(session)
+    template_repo = NotificationTemplateRepository(session)
+    notification_service = NotificationService(
+        repository=notification_repo,
+        template_repository=template_repo,
+        renderer=_template_renderer,
+        sender_factory=_sender_factory,
+    )
+    return ParticipationService(session, participation_repo, event_repo, notification_service)
 
 
 async def get_user_service(

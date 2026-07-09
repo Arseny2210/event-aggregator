@@ -26,6 +26,9 @@ export interface Notification {
   created_at: string
   sent_at?: string
   scheduled_at?: string
+  read_at?: string
+  deleted_at?: string
+  event_id?: string
 }
 
 export interface NotifListParams {

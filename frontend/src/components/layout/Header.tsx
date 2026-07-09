@@ -2,8 +2,12 @@
 
 import Link from "next/link"
 import { GraduationCap } from "lucide-react"
+import { NotificationBell } from "@/components/features/notifications/NotificationBell"
+import { useSessionId } from "@/lib/hooks/useCookie"
 
 export function Header() {
+  const sessionId = useSessionId()
+
   return (
     <header className="glass sticky top-0 z-40 border-b border-border">
       <nav className="mx-auto flex max-w-6xl items-center justify-between px-4 py-3">
@@ -15,6 +19,7 @@ export function Header() {
             ИС «Мероприятия»
           </span>
         </Link>
+        <NotificationBell sessionId={sessionId} />
       </nav>
     </header>
   )

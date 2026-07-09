@@ -7,7 +7,7 @@ Reuses the existing ParticipationService.
 import uuid
 from typing import Annotated
 
-from fastapi import APIRouter, Cookie, Depends, Response
+from fastapi import APIRouter, Cookie, Depends, Request, Response
 from pydantic import BaseModel
 
 from app.api.v1.dependencies import get_participation_service
@@ -15,6 +15,7 @@ from app.schemas.participation import ParticipationResponse
 from app.services.participation import ParticipationService
 
 PARTICIPATION_COOKIE = "session_id"
+SESSION_ID_CLIENT_COOKIE = "session_id_client"
 COOKIE_MAX_AGE = 365 * 24 * 60 * 60  # 1 year
 
 
@@ -22,15 +23,22 @@ class ParticipationStatusResponse(BaseModel):
     is_registered: bool
 
 
-def _get_or_create_session_id(response: Response, session_id: str | None) -> str:
+def _resolve_session_id(request: Request, response: Response, session_id: str | None) -> str:
     if session_id:
         return session_id
-    sid = str(uuid.uuid4())
+    sid = getattr(request.state, "session_id", str(uuid.uuid4()))
     response.set_cookie(
         key=PARTICIPATION_COOKIE,
         value=sid,
         max_age=COOKIE_MAX_AGE,
         httponly=True,
+        samesite="lax",
+    )
+    response.set_cookie(
+        key=SESSION_ID_CLIENT_COOKIE,
+        value=sid,
+        max_age=COOKIE_MAX_AGE,
+        httponly=False,
         samesite="lax",
     )
     return sid
@@ -42,11 +50,12 @@ router = APIRouter()
 @router.post("/{event_id}/participate", response_model=ParticipationResponse, status_code=201)
 async def register_for_event(
     event_id: uuid.UUID,
+    request: Request,
     response: Response,
     participation_service: Annotated[ParticipationService, Depends(get_participation_service)],
     session_id: Annotated[str | None, Cookie(alias=PARTICIPATION_COOKIE)] = None,
 ) -> ParticipationResponse:
-    sid = _get_or_create_session_id(response, session_id)
+    sid = _resolve_session_id(request, response, session_id)
     participation = await participation_service.register_participation(event_id, sid)
     return ParticipationResponse.model_validate(participation)
 

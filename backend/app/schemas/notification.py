@@ -41,11 +41,13 @@ class NotificationContext:
     def to_template_namespace(self) -> dict[str, Any]:
         result: dict[str, Any] = {
             "event_title": self.event_title,
-            "event_id": self.event_id,
-            "event_start_date": self.event_start_date,
+            "event_id": str(self.event_id) if self.event_id is not None else None,
+            "event_start_date": self.event_start_date.isoformat()
+            if self.event_start_date is not None
+            else None,
             "user_name": self.user_name,
             "user_email": self.user_email,
-            "import_job_id": self.import_job_id,
+            "import_job_id": str(self.import_job_id) if self.import_job_id is not None else None,
             "import_filename": self.import_filename,
             "import_total_rows": self.import_total_rows,
             "import_imported_rows": self.import_imported_rows,
@@ -71,6 +73,9 @@ class NotificationResponse(BaseSchema):
     created_at: datetime
     sent_at: datetime | None
     scheduled_at: datetime | None
+    read_at: datetime | None
+    deleted_at: datetime | None
+    event_id: UUID | None
 
 
 class NotificationTemplateResponse(BaseSchema):

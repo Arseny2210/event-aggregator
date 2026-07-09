@@ -1,19 +1,19 @@
 "use client"
 
-import { useState, useMemo, useCallback, useRef, useEffect } from "react"
-import { Header } from "@/components/layout/Header"
-import { Footer } from "@/components/layout/Footer"
 import { HeroSection } from "@/components/features/landing/HeroSection"
 import { StatsSection } from "@/components/features/landing/StatsSection"
-import { Tabs } from "@/components/ui/Tabs"
-import { Input } from "@/components/ui/Input"
-import { Select } from "@/components/ui/Select"
 import { CalendarView } from "@/components/features/public/CalendarView"
 import { TimelineView } from "@/components/features/public/TimelineView"
-import { usePublicEvents, useCategories } from "@/lib/hooks/usePublic"
-import { Search } from "lucide-react"
-import { motion } from "framer-motion"
+import { Footer } from "@/components/layout/Footer"
+import { Header } from "@/components/layout/Header"
+import { Input } from "@/components/ui/Input"
+import { Select } from "@/components/ui/Select"
+import { Tabs } from "@/components/ui/Tabs"
+import { useCategories, usePublicEvents } from "@/lib/hooks/usePublic"
 import { DEFAULT_CATEGORIES } from "@/types/categories"
+import { motion } from "framer-motion"
+import { Search } from "lucide-react"
+import { useCallback, useEffect, useMemo, useRef, useState } from "react"
 
 const VIEW_TABS = [
   { id: "timeline", label: "Лента" },
@@ -23,7 +23,9 @@ const VIEW_TABS = [
 const CATEGORY_ALL = { value: "", label: "Все категории" }
 const CATEGORY_OTHER_VALUE = "__other__"
 const CATEGORY_OTHER = { value: CATEGORY_OTHER_VALUE, label: "Другая" }
-const DEFAULT_CATEGORY_NAMES = new Set(DEFAULT_CATEGORIES.map((n) => n.toLowerCase()))
+const DEFAULT_CATEGORY_NAMES = new Set(
+  DEFAULT_CATEGORIES.map((n) => n.toLowerCase()),
+)
 
 export default function HomePage() {
   const [view, setView] = useState("timeline")
@@ -43,7 +45,11 @@ export default function HomePage() {
   }, [searchInput])
 
   const { data: categoriesData } = useCategories()
-  const { data: eventsData, isLoading, isFetching } = usePublicEvents({
+  const {
+    data: eventsData,
+    isLoading,
+    isFetching,
+  } = usePublicEvents({
     limit: 100,
     search: debouncedSearch || undefined,
   })
@@ -97,25 +103,25 @@ export default function HomePage() {
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
-              className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between"
+              className="mb-6 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between"
             >
               <Tabs tabs={VIEW_TABS} activeTab={view} onTabChange={setView} />
 
-              <div className="flex flex-col-reverse gap-3 sm:flex-row sm:items-center">
-                <div className="relative w-full sm:w-64">
+              <div className="flex w-full flex-col gap-3 sm:ml-auto sm:w-auto sm:flex-row sm:items-center">
+                <div className="relative w-full sm:w-96">
                   <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-foreground-muted" />
                   <Input
                     placeholder="Поиск мероприятий..."
                     value={searchInput}
                     onChange={(e) => setSearchInput(e.target.value)}
-                    className="pl-9 w-full"
+                    className="w-full pl-9"
                   />
                 </div>
                 <Select
                   options={categoryOptions}
                   value={categoryFilter}
                   onChange={(e) => setCategoryFilter(e.target.value)}
-                  className="w-full sm:w-48"
+                  className="sm:w-56 md:w-full"
                 />
               </div>
             </motion.div>

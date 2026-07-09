@@ -7,6 +7,7 @@ No transport-specific code (no SMTP, no Telegram).
 
 from __future__ import annotations
 
+from datetime import UTC, datetime, timedelta, timezone
 from typing import Any
 from uuid import UUID
 
@@ -17,6 +18,7 @@ from app.models.enums import (
     NotificationStatus,
     NotificationTemplateType,
 )
+from app.models.event import Event
 from app.models.notification import Notification
 from app.models.notification_template import NotificationTemplate
 from app.repositories.notification import NotificationRepository
@@ -28,6 +30,10 @@ from app.services.exceptions import (
 )
 from app.services.notification_sender import NotificationSenderFactory
 from app.services.transaction import transactional
+
+_REMINDER_OFFSET: timedelta = timedelta(hours=1)
+_REMINDER_LABEL: str = "1 час"
+_EVENT_TZ = timezone(timedelta(hours=3))  # МСК (UTC+3)
 
 
 class NotificationService:
@@ -189,6 +195,134 @@ class NotificationService:
         self, offset: int, limit: int
     ) -> tuple[list[NotificationTemplate], int]:
         return await self.template_repository.get_all_active(offset, limit)
+
+    async def create_event_reminders(self, event: Event, session_id: str) -> list[Notification]:
+        notifications: list[Notification] = []
+        event_location = event.location or ""
+
+        registration_notification = Notification(
+            channel=NotificationChannelType.in_app,
+            recipient=session_id,
+            template_type=NotificationTemplateType.event_reminder,
+            payload={
+                "event_title": event.title,
+                "event_location": event_location,
+                "event_id": str(event.id),
+                "rendered_body": (
+                    f"Вы записаны на мероприятие «{event.title}»"
+                    f"{' (' + event_location + ')' if event_location else ''}."
+                ),
+            },
+            subject="Регистрация подтверждена",
+            status=NotificationStatus.pending,
+            priority=NotificationPriority.NORMAL,
+            event_id=event.id,
+        )
+        notifications.append(registration_notification)
+
+        if event.start_time is not None:
+            start_dt = datetime.combine(event.start_date, event.start_time, tzinfo=_EVENT_TZ)
+
+            try:
+                template = await self._get_active_template(
+                    NotificationTemplateType.event_reminder,
+                    NotificationChannelType.in_app,
+                    "ru",
+                )
+            except NotificationTemplateNotFoundError:
+                template = None
+
+            if template is not None:
+                scheduled_at = start_dt - _REMINDER_OFFSET
+                if scheduled_at > datetime.now(UTC):
+                    context = NotificationContext(
+                        event_title=event.title,
+                        event_id=event.id,
+                        event_start_date=event.start_date,
+                        extra={"time_left": _REMINDER_LABEL, "event_location": event_location},
+                    )
+                    rendered_body = self.renderer.render(template.body, context)
+                    rendered_subject = self.renderer.render_subject(template.subject, context)
+
+                    payload = context.to_template_namespace()
+                    payload["rendered_body"] = rendered_body
+                    if rendered_subject is not None:
+                        payload["rendered_subject"] = rendered_subject
+
+                    reminder = Notification(
+                        channel=NotificationChannelType.in_app,
+                        recipient=session_id,
+                        template_type=NotificationTemplateType.event_reminder,
+                        payload=payload,
+                        subject=rendered_subject,
+                        status=NotificationStatus.pending,
+                        priority=NotificationPriority.NORMAL,
+                        scheduled_at=scheduled_at,
+                        event_id=event.id,
+                    )
+                    notifications.append(reminder)
+
+        async with transactional(self.repository.session):
+            for n in notifications:
+                self.repository.session.add(n)
+            await self.repository.session.flush()
+
+        return notifications
+
+    async def create_cancel_notification(self, event: Event, session_id: str) -> None:
+        event_location = event.location or ""
+        notification = Notification(
+            channel=NotificationChannelType.in_app,
+            recipient=session_id,
+            template_type=NotificationTemplateType.event_reminder,
+            payload={
+                "event_title": event.title,
+                "event_location": event_location,
+                "event_id": str(event.id),
+                "rendered_body": (
+                    f"Вы отменили запись на мероприятие «{event.title}»"
+                    f"{' (' + event_location + ')' if event_location else ''}."
+                ),
+            },
+            subject="Запись отменена",
+            status=NotificationStatus.pending,
+            priority=NotificationPriority.NORMAL,
+            event_id=event.id,
+        )
+        async with transactional(self.repository.session):
+            self.repository.session.add(notification)
+            await self.repository.session.flush()
+
+    async def get_public_notifications(
+        self, session_id: str, offset: int, limit: int
+    ) -> tuple[list[Notification], int]:
+        return await self.repository.get_by_session_id(session_id, offset, limit)
+
+    async def mark_as_read(self, notification_id: UUID, session_id: str) -> Notification:
+        notification = await self.repository.get_by_id(notification_id)
+        if notification is None:
+            raise NotificationNotFoundError(notification_id)
+        if notification.recipient != session_id:
+            raise NotificationNotFoundError(notification_id)
+        async with transactional(self.repository.session):
+            await self.repository.mark_as_read(notification_id)
+            notification.read_at = datetime.now(UTC)
+            return notification
+
+    async def delete_notification(self, notification_id: UUID, session_id: str) -> None:
+        notification = await self.repository.get_by_id(notification_id)
+        if notification is None:
+            raise NotificationNotFoundError(notification_id)
+        if notification.recipient != session_id:
+            raise NotificationNotFoundError(notification_id)
+        async with transactional(self.repository.session):
+            await self.repository.soft_delete_notification(notification_id)
+
+    async def cancel_event_reminders(self, session_id: str, event_id: UUID) -> int:
+        return await self.repository.delete_by_session_and_event(session_id, event_id)
+
+    async def cleanup_old_notifications(self, days: int = 7) -> int:
+        return await self.repository.cleanup_old_notifications(days)
 
     async def _get_active_template(
         self,

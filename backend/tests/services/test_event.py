@@ -28,7 +28,6 @@ class TestEventService:
 
     @pytest.mark.asyncio
     async def test_get_event_not_found(self, db_session):
-        from uuid import uuid4
 
         svc = EventService(
             session=db_session,
@@ -60,7 +59,6 @@ class TestEventService:
 
     @pytest.mark.asyncio
     async def test_create_event_organizer_not_found(self, db_session):
-        from uuid import uuid4
 
         svc = EventService(
             session=db_session,
