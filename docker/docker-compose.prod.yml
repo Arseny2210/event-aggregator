@@ -10,6 +10,7 @@ services:
       - .env.prod
     environment:
       ENVIRONMENT: production
+      CORS_ORIGINS: http://bgitu-event.ru,https://bgitu-event.ru
       DEFAULT_IMPORT_CATEGORY_ID: d25a71d1-9001-4e4c-926f-4fa2e5de013c
       UPLOAD_DIR: /app/uploads
     volumes:
@@ -25,14 +26,13 @@ services:
       - .env.prod
     build:
       args:
-        NEXT_PUBLIC_API_URL: http://localhost:8000/api/v1
+        NEXT_PUBLIC_API_URL: http://bgitu-event.ru/api/v1
 
   nginx:
     ports:
       - "80:80"
-      - "443:443"
     volumes:
-      - ./nginx/nginx.prod.conf.template:/etc/nginx/templates/default.conf.template:ro
+      - ./nginx/nginx.prod.conf:/etc/nginx/conf.d/default.conf:ro
       - uploads_data:/var/www/uploads:ro
 
   migrate:
@@ -49,5 +49,4 @@ services:
 
 volumes:
   postgres_data:
-  redis_data:
   uploads_data:
