@@ -1,7 +1,10 @@
 """Service for managing event participation."""
 
+from __future__ import annotations
+
 from dataclasses import dataclass
 from datetime import date
+from typing import TYPE_CHECKING
 from uuid import UUID
 
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -19,6 +22,9 @@ from app.services.exceptions import (
     RegistrationClosedError,
 )
 from app.services.transaction import transactional
+
+if TYPE_CHECKING:
+    from app.services.notification import NotificationService
 
 _STATISTICS_LIMIT = 100_000
 
@@ -40,10 +46,12 @@ class ParticipationService:
         session: AsyncSession,
         repository: ParticipationRepository,
         event_repository: EventRepository,
+        notification_service: NotificationService,
     ) -> None:
         self.session = session
         self.repository = repository
         self.event_repository = event_repository
+        self.notification_service = notification_service
 
     async def register_participation(self, event_id: UUID, session_id: str) -> Participation:
         event = await self.event_repository.get_by_id(event_id)
@@ -64,14 +72,21 @@ class ParticipationService:
             status=ParticipationStatus.registered,
         )
         async with transactional(self.session):
-            return await self.repository.create(participation)
+            created = await self.repository.create(participation)
+
+        await self.notification_service.create_event_reminders(event, session_id)
+        return created
 
     async def cancel_participation(self, event_id: UUID, session_id: str) -> None:
         participation = await self.repository.get_by_event_and_session(event_id, session_id)
         if participation is None:
             raise ParticipationNotFoundError(event_id=event_id, session_id=session_id)
+        event = await self.event_repository.get_by_id(event_id)
         async with transactional(self.session):
             await self.repository.delete(participation)
+        await self.notification_service.cancel_event_reminders(session_id, event_id)
+        if event is not None:
+            await self.notification_service.create_cancel_notification(event, session_id)
 
     async def get_participation(self, participation_id: UUID) -> Participation:
         participation = await self.repository.get_by_id(participation_id)

@@ -1,6 +1,6 @@
 "use client"
 
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query"
+import { useQuery, useMutation } from "@tanstack/react-query"
 import { publicApi } from "@/lib/api/public"
 
 export function useCategories() {
@@ -12,9 +12,10 @@ export function useCategories() {
 }
 
 export function usePublicEvents(params?: { offset?: number; limit?: number; search?: string; date_from?: string; date_to?: string }) {
+  const today = new Date().toISOString().slice(0, 10)
   return useQuery({
     queryKey: ["public-events", params],
-    queryFn: () => publicApi.events.list({ ...params, status: "published" }),
+    queryFn: () => publicApi.events.list({ ...params, status: "published", date_from: params?.date_from ?? today }),
   })
 }
 
@@ -32,29 +33,18 @@ export function useParticipationStatus(eventId: string | undefined) {
     queryFn: () => publicApi.participation.status(eventId!),
     enabled: !!eventId,
     retry: false,
+    staleTime: 30_000,
   })
 }
 
 export function useRegisterParticipation() {
-  const queryClient = useQueryClient()
   return useMutation({
     mutationFn: (eventId: string) => publicApi.participation.register(eventId),
-    onSuccess: (_, eventId) => {
-      queryClient.invalidateQueries({ queryKey: ["participation", eventId] })
-      queryClient.invalidateQueries({ queryKey: ["public-events"] })
-      queryClient.invalidateQueries({ queryKey: ["public-event", eventId] })
-    },
   })
 }
 
 export function useCancelParticipation() {
-  const queryClient = useQueryClient()
   return useMutation({
     mutationFn: (eventId: string) => publicApi.participation.cancel(eventId),
-    onSuccess: (_, eventId) => {
-      queryClient.invalidateQueries({ queryKey: ["participation", eventId] })
-      queryClient.invalidateQueries({ queryKey: ["public-events"] })
-      queryClient.invalidateQueries({ queryKey: ["public-event", eventId] })
-    },
   })
 }

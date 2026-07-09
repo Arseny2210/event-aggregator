@@ -10,6 +10,8 @@ from app.api.v1.endpoints.imports import router as imports_router
 from app.api.v1.endpoints.notifications import router as notifications_router
 from app.api.v1.endpoints.organizers import router as organizers_router
 from app.api.v1.endpoints.participation import router as participation_router
+from app.api.v1.endpoints.public_notifications import router as public_notifications_router
+from app.api.v1.endpoints.session import router as session_router
 from app.api.v1.endpoints.uploads import router as uploads_router
 from app.api.v1.endpoints.users import router as users_router
 
@@ -20,8 +22,12 @@ router.include_router(categories_router, prefix="/categories", tags=["categories
 router.include_router(dashboard_router, prefix="/dashboard", tags=["dashboard"])
 router.include_router(events_router, prefix="/events", tags=["events"])
 router.include_router(imports_router, prefix="/imports", tags=["imports"])
+router.include_router(
+    public_notifications_router, prefix="/notifications", tags=["public-notifications"]
+)
 router.include_router(notifications_router, prefix="/notifications", tags=["notifications"])
 router.include_router(organizers_router, prefix="/organizers", tags=["organizers"])
 router.include_router(participation_router, prefix="/events", tags=["participation"])
+router.include_router(session_router, prefix="/session", tags=["session"])
 router.include_router(uploads_router, prefix="/upload", tags=["uploads"])
 router.include_router(users_router, prefix="/users", tags=["users"])

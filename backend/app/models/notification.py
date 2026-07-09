@@ -109,6 +109,21 @@ class Notification(UUIDMixin, Base):
         nullable=True,
         default=None,
     )
+    read_at: Mapped[datetime | None] = mapped_column(
+        DateTime(timezone=True),
+        nullable=True,
+        default=None,
+    )
+    deleted_at: Mapped[datetime | None] = mapped_column(
+        DateTime(timezone=True),
+        nullable=True,
+        default=None,
+    )
+    event_id: Mapped[uuid.UUID | None] = mapped_column(
+        UUID(as_uuid=True),
+        nullable=True,
+        default=None,
+    )
 
     def __repr__(self) -> str:
         return (

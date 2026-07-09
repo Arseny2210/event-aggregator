@@ -7,6 +7,7 @@ from app.core.constants import PROJECT_NAME
 from app.lifespan import lifespan
 from app.middleware.cors import setup_cors
 from app.middleware.error_handler import setup_error_handler
+from app.middleware.session import SessionMiddleware
 from app.routers.health import router as health_router
 
 
@@ -38,6 +39,7 @@ def create_app() -> FastAPI:
 
     setup_cors(app)
     setup_error_handler(app)
+    app.add_middleware(SessionMiddleware)
 
     app.include_router(health_router)
     app.include_router(api_router)
