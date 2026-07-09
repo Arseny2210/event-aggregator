@@ -5,11 +5,11 @@ services:
     volumes:
       - postgres_data:/var/lib/postgresql/data
     environment:
-      POSTGRES_DB: event_aggregator
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      test: ['CMD-SHELL', 'pg_isready -U postgres']
       interval: 5s
       timeout: 5s
       retries: 5
@@ -18,13 +18,13 @@ services:
     build:
       context: ../backend
       dockerfile: ../docker/Dockerfile.backend
-    entrypoint: ["alembic", "upgrade", "head"]
+    entrypoint: ['alembic', 'upgrade', 'head']
     environment:
-      DATABASE_URL: postgresql+asyncpg://postgres:postgres@postgres:5432/event_aggregator
+      DATABASE_URL: ${DATABASE_URL}
     depends_on:
       postgres:
         condition: service_healthy
-    restart: "no"
+    restart: 'no'
 
   backend:
     build:
@@ -48,8 +48,8 @@ services:
     build:
       context: ../frontend
       dockerfile: ../docker/Dockerfile.frontend
-      args:
-        NEXT_PUBLIC_API_URL: http://localhost:8000/api/v1
+    args:
+      NEXT_PUBLIC_API_URL: ${NEXT_PUBLIC_API_URL}
     restart: unless-stopped
     depends_on:
       - backend
@@ -58,7 +58,7 @@ services:
     image: nginx:alpine
     restart: unless-stopped
     ports:
-      - "80:80"
+      - '80:80'
     volumes:
       - ./nginx/nginx.conf:/etc/nginx/conf.d/default.conf:ro
       - uploads_data:/var/www/uploads:ro
